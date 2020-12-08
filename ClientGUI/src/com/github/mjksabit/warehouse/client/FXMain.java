@@ -1,19 +1,24 @@
 package com.github.mjksabit.warehouse.client;
 
+import com.github.mjksabit.warehouse.client.controller.Login;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+public class FXMain extends Application {
+
+
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();
+        Login loginPage = JFXLoader.loadFXML("login");
+        loginPage.setStage(primaryStage);
+
+        loginPage.show("Log in - MJK Warehouse");
+
+        primaryStage.setOnCloseRequest(event -> System.exit(0));
     }
 
 
