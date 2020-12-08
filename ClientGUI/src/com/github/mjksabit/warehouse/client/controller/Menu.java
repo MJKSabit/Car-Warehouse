@@ -1,5 +1,6 @@
 package com.github.mjksabit.warehouse.client.controller;
 
+import com.github.mjksabit.warehouse.client.view.Card;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -45,6 +46,15 @@ public class Menu extends Controller {
 
     @FXML
     private FlowPane carListFlowPane;
+
+    public void init(String username) {
+        usernameLabel.setText(username);
+        registrationNo.requestFocus();
+
+        carListFlowPane.getChildren().add(new Card());
+        carListFlowPane.getChildren().add(new Card());
+        carListFlowPane.getChildren().add(new Card());
+    }
 
     @FXML
     void closeSearchByMakeModel(ActionEvent event) {

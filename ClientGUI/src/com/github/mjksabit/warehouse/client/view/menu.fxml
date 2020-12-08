@@ -13,7 +13,6 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.mjksabit.warehouse.client.controller.Menu">
    <top>
       <AnchorPane prefHeight="60.0" prefWidth="800.0" style="-fx-background-color: #008891;">
@@ -142,12 +141,12 @@
                               <Font name="Ubuntu" size="18.0" />
                            </font>
                         </Label>
-                        <JFXTextField fx:id="carMake" focusColor="#00587a" layoutX="70.0" layoutY="10.0" onAction="#searchByMakeModel" prefHeight="33.0" prefWidth="113.0" promptText="eg. AES-265" text="eg. Toyoya" unFocusColor="#008891" AnchorPane.leftAnchor="70.0">
+                        <JFXTextField fx:id="carMake" focusColor="#00587a" layoutX="70.0" layoutY="10.0" onAction="#searchByMakeModel" prefHeight="33.0" prefWidth="113.0" promptText="eg. Toyoya" unFocusColor="#008891" AnchorPane.leftAnchor="70.0">
                            <font>
                               <Font name="Ubuntu Light" size="18.0" />
                            </font>
                         </JFXTextField>
-                        <JFXTextField fx:id="carModel" focusColor="#00587a" layoutX="260.0" layoutY="10.0" onAction="#searchByMakeModel" prefHeight="33.0" prefWidth="206.0" promptText="eg. AES-265" text="eg. Nova" unFocusColor="#008891" AnchorPane.leftAnchor="260.0" AnchorPane.rightAnchor="183.0">
+                        <JFXTextField fx:id="carModel" focusColor="#00587a" layoutX="260.0" layoutY="10.0" onAction="#searchByMakeModel" prefHeight="33.0" prefWidth="206.0" promptText="eg. Nova" unFocusColor="#008891" AnchorPane.leftAnchor="260.0" AnchorPane.rightAnchor="183.0">
                            <font>
                               <Font name="Ubuntu Light" size="18.0" />
                            </font>
@@ -169,7 +168,7 @@
                         </Label>
                      </children>
                   </AnchorPane>
-                  <ScrollPane fitToWidth="true" prefWidth="750.0" VBox.vgrow="ALWAYS">
+                  <ScrollPane fitToWidth="true" prefWidth="750.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
                      <content>
                         <FlowPane fx:id="carListFlowPane" hgap="10.0" vgap="10.0" />
                      </content>

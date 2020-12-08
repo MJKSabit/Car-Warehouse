@@ -1,28 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="350.0" prefWidth="250.0" style="-fx-background-color: #E7E7DE; -fx-border-radius: 10px;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.mjksabit.warehouse.client.controller.CarCard">
+<fx:root type="javafx.scene.layout.AnchorPane" prefHeight="375.0" prefWidth="250.0" style="-fx-background-color: #E7E7DE; -fx-border-radius: 10px; -fx-background-radius: 10px;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <Label layoutX="14.0" layoutY="258.0" prefHeight="35.0" prefWidth="162.0" text="Toyota" AnchorPane.leftAnchor="10.0">
+      <ImageView fx:id="image" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <Image url="@../assets/car.jpeg" />
+         </image></ImageView>
+      <Label fx:id="carMake" layoutX="13.0" layoutY="253.0" prefHeight="20.0" prefWidth="125.0" text="Toyota" AnchorPane.leftAnchor="13.0">
          <font>
-            <Font size="30.0" />
+            <Font name="Ubuntu Condensed" size="16.0" />
          </font>
       </Label>
-      <Label layoutX="14.0" layoutY="316.0" prefHeight="20.0" prefWidth="86.0" text="NOVA" textAlignment="RIGHT" AnchorPane.rightAnchor="150.0">
+      <Label fx:id="carModel" layoutX="13.0" layoutY="273.0" prefHeight="34.0" prefWidth="170.0" text="NOVA" textAlignment="RIGHT" AnchorPane.rightAnchor="67.0">
          <font>
-            <Font size="14.0" />
+            <Font name="Ubuntu Bold" size="25.0" />
          </font>
       </Label>
-      <Label layoutX="109.0" layoutY="316.0" prefHeight="14.0" prefWidth="63.0" text="2016">
+      <Label fx:id="yearMade" alignment="CENTER_RIGHT" layoutX="156.0" layoutY="281.0" prefHeight="14.0" prefWidth="63.0" text="2016">
          <font>
-            <Font name="System Bold" size="14.0" />
+            <Font name="Ubuntu Condensed" size="16.0" />
+         </font>
+      </Label>
+      <Group layoutX="151.0" layoutY="250.0">
+         <children>
+            <Circle fx:id="color1" fill="#d71414" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+            <Circle fx:id="color2" fill="#222222" layoutX="30.0" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+            <Circle fx:id="color3" fill="#bcbcbc" layoutX="61.0" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+         </children>
+      </Group>
+      <Label fx:id="quantity" layoutX="217.0" layoutY="5.0" style="-fx-background-color: #00000080;" text="2 Left" textFill="WHITE" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <font>
+            <Font name="Ubuntu Light" size="18.0" />
+         </font>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </Label>
+      <Label layoutX="10.0" layoutY="316.0" prefHeight="20.0" prefWidth="125.0" text="Registration #">
+         <font>
+            <Font name="Ubuntu Condensed" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="registrationNo" layoutX="16.0" layoutY="338.0" prefHeight="21.0" prefWidth="125.0" text="RAGB-123">
+         <font>
+            <Font name="Ubuntu Condensed" size="18.0" />
          </font>
       </Label>
    </children>
-</AnchorPane>
+</fx:root>
