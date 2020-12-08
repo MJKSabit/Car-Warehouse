@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.svg.SVGGlyph?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.mjksabit.warehouse.client.controller.Menu">
+   <top>
+      <AnchorPane prefHeight="60.0" prefWidth="800.0" style="-fx-background-color: #008891;">
+         <children>
+            <JFXButton alignment="CENTER" contentDisplay="GRAPHIC_ONLY" onAction="#toggleSideMenu" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-10.0" AnchorPane.topAnchor="5.0">
+               <graphic>
+                  <Pane fx:id="toggleButtonGraphics" prefHeight="40.0" prefWidth="50.0">
+                     <children>
+                        <SVGGlyph fill="WHITE" layoutX="-75.0" layoutY="-58.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" scaleX="0.12" scaleY="0.12" size="200.0" svgPathContent="M12.5 62.5H87.5V54.1667H12.5V62.5ZM12.5 79.1667H87.5V70.8333H12.5V79.1667ZM12.5 45.8333H87.5V37.5H12.5V45.8333ZM12.5 20.8333V29.1667H87.5V20.8333H12.5Z" />
+                     </children>
+                  </Pane>
+               </graphic>
+            </JFXButton>
+            <Label layoutX="50.0" layoutY="11.0" text="MJK Warehouse" textFill="WHITE">
+               <font>
+                  <Font name="Ubuntu" size="30.0" />
+               </font>
+            </Label>
+            <AnchorPane layoutX="594.0" layoutY="4.0" prefHeight="32.0" prefWidth="220.0" scaleX="0.75" scaleY="0.75" style="-fx-background-color: #00587A; -fx-background-radius: 30px;" AnchorPane.rightAnchor="-14.0">
+               <children>
+                  <Label fx:id="usernameLabel" alignment="CENTER" layoutX="51.0" layoutY="10.0" prefHeight="31.0" prefWidth="150.0" text="Viewer" textFill="WHITE">
+                     <font>
+                        <Font name="Ubuntu" size="24.0" />
+                     </font>
+                  </Label>
+                  <SVGPath content="M25 4.16666C13.5 4.16666 4.16669 13.5 4.16669 25C4.16669 36.5 13.5 45.8333 25 45.8333C36.5 45.8333 45.8334 36.5 45.8334 25C45.8334 13.5 36.5 4.16666 25 4.16666ZM25 10.4167C28.4584 10.4167 31.25 13.2083 31.25 16.6667C31.25 20.125 28.4584 22.9167 25 22.9167C21.5417 22.9167 18.75 20.125 18.75 16.6667C18.75 13.2083 21.5417 10.4167 25 10.4167ZM25 40C19.7917 40 15.1875 37.3333 12.5 33.2917C12.5625 29.1458 20.8334 26.875 25 26.875C29.1459 26.875 37.4375 29.1458 37.5 33.2917C34.8125 37.3333 30.2084 40 25 40Z" fill="WHITE" layoutX="1.0" layoutY="-1.0" scaleX="0.5" scaleY="0.5" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </top>
+   <left>
+      <AnchorPane prefHeight="416.0" prefWidth="50.0" style="-fx-background-color: #E7E7DE;" BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane fx:id="sidePane" layoutX="-100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Pane layoutX="98.0" prefHeight="46.0" prefWidth="38.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <SVGPath content="M64.5833 58.3333H61.2917L60.125 57.2083C64.2083 52.4583 66.6667 46.2917 66.6667 39.5833C66.6667 24.625 54.5417 12.5 39.5833 12.5C24.625 12.5 12.5 24.625 12.5 39.5833C12.5 54.5417 24.625 66.6667 39.5833 66.6667C46.2917 66.6667 52.4583 64.2083 57.2083 60.125L58.3333 61.2917V64.5833L79.1667 85.375L85.375 79.1667L64.5833 58.3333ZM39.5833 58.3333C29.2083 58.3333 20.8333 49.9583 20.8333 39.5833C20.8333 29.2083 29.2083 20.8333 39.5833 20.8333C49.9583 20.8333 58.3333 29.2083 58.3333 39.5833C58.3333 49.9583 49.9583 58.3333 39.5833 58.3333Z" fill="#5e5e5e" layoutX="77.0" layoutY="-26.0" scaleX="0.33" scaleY="0.33" />
+                        <Label layoutX="22.0" layoutY="12.0" prefHeight="18.0" prefWidth="75.0" text="Search">
+                           <font>
+                              <Font name="Ubuntu Thin" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane fx:id="logoutButton" layoutY="370.0" prefHeight="46.0" prefWidth="151.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <SVGPath content="M21.0208 32.4792L23.9583 35.4167L34.375 25L23.9583 14.5833L21.0208 17.5208L26.3958 22.9167H6.25V27.0833H26.3958L21.0208 32.4792ZM39.5833 6.25H10.4167C8.10417 6.25 6.25 8.125 6.25 10.4167V18.75H10.4167V10.4167H39.5833V39.5833H10.4167V31.25H6.25V39.5833C6.25 41.875 8.10417 43.75 10.4167 43.75H39.5833C41.875 43.75 43.75 41.875 43.75 39.5833V10.4167C43.75 8.125 41.875 6.25 39.5833 6.25Z" fill="#8f1500" layoutX="99.0" layoutY="-1.0" scaleX="0.66" scaleY="0.66" />
+                        <Label layoutX="22.0" layoutY="13.0" prefHeight="18.0" prefWidth="75.0" text="Log out" textFill="#8f0000">
+                           <font>
+                              <Font name="Ubuntu Condensed" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane fx:id="searchbyRegButton" layoutY="46.0" prefHeight="46.0" prefWidth="144.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="46.0">
+                     <children>
+                        <SVGPath content="M64.5833 58.3333H61.2917L60.125 57.2083C64.2083 52.4583 66.6667 46.2917 66.6667 39.5833C66.6667 24.625 54.5417 12.5 39.5833 12.5C24.625 12.5 12.5 24.625 12.5 39.5833C12.5 54.5417 24.625 66.6667 39.5833 66.6667C46.2917 66.6667 52.4583 64.2083 57.2083 60.125L58.3333 61.2917V64.5833L79.1667 85.375L85.375 79.1667L64.5833 58.3333ZM39.5833 58.3333C29.2083 58.3333 20.8333 49.9583 20.8333 39.5833C20.8333 29.2083 29.2083 20.8333 39.5833 20.8333C49.9583 20.8333 58.3333 29.2083 58.3333 39.5833C58.3333 49.9583 49.9583 58.3333 39.5833 58.3333Z" fill="#008891" layoutX="77.0" layoutY="-26.0" scaleX="0.33" scaleY="0.33" />
+                        <Label layoutX="22.0" layoutY="12.0" prefHeight="18.0" prefWidth="75.0" text="Reg No." textFill="#008891">
+                           <font>
+                              <Font name="Ubuntu Condensed" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane fx:id="searchByMakeButton" layoutX="5.0" layoutY="85.0" prefHeight="46.0" prefWidth="144.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <SVGPath content="M64.5833 58.3333H61.2917L60.125 57.2083C64.2083 52.4583 66.6667 46.2917 66.6667 39.5833C66.6667 24.625 54.5417 12.5 39.5833 12.5C24.625 12.5 12.5 24.625 12.5 39.5833C12.5 54.5417 24.625 66.6667 39.5833 66.6667C46.2917 66.6667 52.4583 64.2083 57.2083 60.125L58.3333 61.2917V64.5833L79.1667 85.375L85.375 79.1667L64.5833 58.3333ZM39.5833 58.3333C29.2083 58.3333 20.8333 49.9583 20.8333 39.5833C20.8333 29.2083 29.2083 20.8333 39.5833 20.8333C49.9583 20.8333 58.3333 29.2083 58.3333 39.5833C58.3333 49.9583 49.9583 58.3333 39.5833 58.3333Z" fill="#008891" layoutX="77.0" layoutY="-26.0" scaleX="0.33" scaleY="0.33" />
+                        <Label layoutX="22.0" layoutY="12.0" prefHeight="18.0" prefWidth="75.0" text="Make/Model" textFill="#008891">
+                           <font>
+                              <Font name="Ubuntu Condensed" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </Pane>
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </left>
+   <bottom>
+      <AnchorPane prefHeight="24.0" prefWidth="200.0" style="-fx-background-color: #008891;" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="624.0" layoutY="3.0" text="Created by Md. Jehadul Karim ( www.github.com/MJKSabit )" textFill="WHITE" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="4.0">
+               <font>
+                  <Font name="Ubuntu" size="11.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </bottom>
+   <center>
+      <AnchorPane BorderPane.alignment="CENTER">
+         <children>
+            <VBox layoutX="70.0" layoutY="31.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <AnchorPane fx:id="regSearchContainer" prefHeight="50.0" prefWidth="700.0">
+                     <children>
+                        <Label layoutX="14.0" layoutY="16.0" text="Registration #" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
+                           <font>
+                              <Font name="Ubuntu" size="18.0" />
+                           </font>
+                        </Label>
+                        <JFXTextField fx:id="registrationNo" focusColor="#00587a" layoutX="139.0" layoutY="9.0" onAction="#searchByRegNo" prefHeight="25.0" prefWidth="414.0" promptText="eg. AES-265" unFocusColor="#008891" AnchorPane.leftAnchor="139.0" AnchorPane.rightAnchor="185.0">
+                           <font>
+                              <Font name="Ubuntu Light" size="18.0" />
+                           </font>
+                        </JFXTextField>
+                        <JFXButton layoutX="577.0" layoutY="9.0" onAction="#searchByRegNo" prefHeight="32.0" prefWidth="116.0" ripplerFill="WHITE" style="-fx-background-color: #00587A;" text="Search" textFill="WHITE" AnchorPane.rightAnchor="60.0">
+                           <font>
+                              <Font name="Ubuntu" size="18.0" />
+                           </font>
+                        </JFXButton>
+                        <JFXButton contentDisplay="GRAPHIC_ONLY" layoutX="700.0" layoutY="6.0" onAction="#closeSearchByReg" scaleX="0.5" scaleY="0.5" AnchorPane.rightAnchor="10.0">
+                           <graphic>
+                              <SVGPath content="M39.5833 13.3542L36.6458 10.4167L25 22.0625L13.3541 10.4167L10.4166 13.3542L22.0625 25L10.4166 36.6458L13.3541 39.5833L25 27.9375L36.6458 39.5833L39.5833 36.6458L27.9375 25L39.5833 13.354M39.5833 13.3542L36.6458 10.4167L25 22.0625L13.3541 10.4167L10.4166 13.3542L22.0625 25L10.4166 36.6458L13.3541 39.5833L25 27.9375L36.6458 39.5833L39.5833 36.6458L27.9375 25L39.5833 13.3542Z" fill="RED" />
+                           </graphic>
+                        </JFXButton>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="makeSearchContainer" layoutX="10.0" layoutY="10.0" prefHeight="50.0" prefWidth="700.0">
+                     <children>
+                        <Label layoutX="15.0" layoutY="17.0" text="Make" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="17.0">
+                           <font>
+                              <Font name="Ubuntu" size="18.0" />
+                           </font>
+                        </Label>
+                        <JFXTextField fx:id="carMake" focusColor="#00587a" layoutX="70.0" layoutY="10.0" onAction="#searchByMakeModel" prefHeight="33.0" prefWidth="113.0" promptText="eg. AES-265" text="eg. Toyoya" unFocusColor="#008891" AnchorPane.leftAnchor="70.0">
+                           <font>
+                              <Font name="Ubuntu Light" size="18.0" />
+                           </font>
+                        </JFXTextField>
+                        <JFXTextField fx:id="carModel" focusColor="#00587a" layoutX="260.0" layoutY="10.0" onAction="#searchByMakeModel" prefHeight="33.0" prefWidth="206.0" promptText="eg. AES-265" text="eg. Nova" unFocusColor="#008891" AnchorPane.leftAnchor="260.0" AnchorPane.rightAnchor="183.0">
+                           <font>
+                              <Font name="Ubuntu Light" size="18.0" />
+                           </font>
+                        </JFXTextField>
+                        <JFXButton layoutX="577.0" layoutY="9.0" onAction="#searchByMakeModel" prefHeight="32.0" prefWidth="116.0" ripplerFill="WHITE" style="-fx-background-color: #00587A;" text="Search" textFill="WHITE" AnchorPane.rightAnchor="60.0">
+                           <font>
+                              <Font name="Ubuntu" size="18.0" />
+                           </font>
+                        </JFXButton>
+                        <JFXButton contentDisplay="GRAPHIC_ONLY" layoutX="700.0" layoutY="6.0" onAction="#closeSearchByMakeModel" scaleX="0.5" scaleY="0.5" AnchorPane.rightAnchor="10.0">
+                           <graphic>
+                              <SVGPath content="M39.5833 13.3542L36.6458 10.4167L25 22.0625L13.3541 10.4167L10.4166 13.3542L22.0625 25L10.4166 36.6458L13.3541 39.5833L25 27.9375L36.6458 39.5833L39.5833 36.6458L27.9375 25L39.5833 13.354M39.5833 13.3542L36.6458 10.4167L25 22.0625L13.3541 10.4167L10.4166 13.3542L22.0625 25L10.4166 36.6458L13.3541 39.5833L25 27.9375L36.6458 39.5833L39.5833 36.6458L27.9375 25L39.5833 13.3542Z" fill="RED" />
+                           </graphic>
+                        </JFXButton>
+                        <Label layoutX="198.0" layoutY="17.0" text="Model" AnchorPane.leftAnchor="198.0">
+                           <font>
+                              <Font name="Ubuntu" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+                  <ScrollPane fitToWidth="true" prefWidth="750.0" VBox.vgrow="ALWAYS">
+                     <content>
+                        <FlowPane fx:id="carListFlowPane" hgap="10.0" vgap="10.0" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>
