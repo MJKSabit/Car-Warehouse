@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 public class Menu extends Controller {
 
@@ -50,6 +51,11 @@ public class Menu extends Controller {
     public void init(String username) {
         usernameLabel.setText(username);
         registrationNo.requestFocus();
+
+        regSearchContainer.managedProperty().bind(regSearchContainer.visibleProperty());
+        makeSearchContainer.managedProperty().bind(makeSearchContainer.visibleProperty());
+
+        regSearchContainer.setVisible(false);
 
         carListFlowPane.getChildren().add(new Card());
         carListFlowPane.getChildren().add(new Card());
