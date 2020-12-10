@@ -91,6 +91,8 @@ public class ResponseListener implements Runnable {
             }
             catch (Exception e) {
                 // Disconnected!!!
+//                errorHandler.handle();
+                continueListening = false;
                 e.printStackTrace();
             }
         }

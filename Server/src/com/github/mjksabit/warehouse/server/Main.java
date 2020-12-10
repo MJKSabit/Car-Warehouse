@@ -1,5 +1,6 @@
 package com.github.mjksabit.warehouse.server;
 
+import com.github.mjksabit.warehouse.server.Network.Client;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +20,7 @@ public class Main {
         try (ServerSocket serverSocket = new ServerSocket(PORT)){
             while (true) {
                 logger.info("Waiting for client to connect");
-                Socket socket = serverSocket.accept();
+                new Client(serverSocket.accept());
             }
         } catch (BindException e) {
             logger.error("PORT: "+PORT+" already in use!");

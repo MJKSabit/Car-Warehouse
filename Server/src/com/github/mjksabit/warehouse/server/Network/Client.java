@@ -1,30 +1,68 @@
 package com.github.mjksabit.warehouse.server.Network;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.*;
 import java.net.Socket;
 
-public class Client implements Runnable {
+public class Client implements Runnable, Closeable {
+
+    Logger logger = LogManager.getLogger(Client.class);
 
     Socket socket;
 
     InputStream inputStream = null;
     OutputStream outputStream = null;
-    BufferedReader in = null;
-    BufferedWriter out = null;
+    DataInputStream in = null;
+    DataOutputStream out = null;
 
-    ResponseHandler manager;
+    ResponseSender sender;
 
-    public Client(Socket socket) {
+    private boolean isManufacturer  = false;
+    private boolean isAdmin         = false;
+
+    private String name = null;
+
+    public Client(Socket socket) throws IOException {
         this.socket = socket;
-        manager = new ResponseHandler();
+
+        inputStream = socket.getInputStream();
+        outputStream = socket.getOutputStream();
+
+        in = new DataInputStream(inputStream);
+        out = new DataOutputStream(outputStream);
+
         new Thread(this).start();
     }
 
     @Override
     public void run() {
+        sender = new ResponseSender(this, out);
 
+        logger.info("Client Connected");
+
+        try {
+            while (true) {
+                logger.info("Reading Data");
+                var data = new Data(in);
+                logger.info("Data read, Creating Response");
+                sender.addToQueue(data);
+            }
+        } catch (JSONException | IOException e) {
+            logger.error(e.getMessage());
+        }
+
+    }
+
+
+    @Override
+    public void close() throws IOException {
+        inputStream.close();
+        outputStream.close();
+
+        socket.close();
     }
 }
