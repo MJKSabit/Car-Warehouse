@@ -1,5 +1,6 @@
 package com.github.mjksabit.warehouse.client.controller;
 
+import com.github.mjksabit.warehouse.client.model.Car;
 import com.github.mjksabit.warehouse.client.view.Card;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
@@ -9,6 +10,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class Menu extends Controller {
 
@@ -57,9 +62,13 @@ public class Menu extends Controller {
 
         regSearchContainer.setVisible(false);
 
-        carListFlowPane.getChildren().add(new Card());
-        carListFlowPane.getChildren().add(new Card());
-        carListFlowPane.getChildren().add(new Card());
+        var car = new Car("XYZ-123", "Toyota", "Nova", 2020, 10000, "#2A2A2A");
+
+        car.setImage("./src/com/github/mjksabit/warehouse/client/assets/car.jpeg");
+
+        carListFlowPane.getChildren().add(new Card(car));
+//        carListFlowPane.getChildren().add(new Card());
+//        carListFlowPane.getChildren().add(new Card());
     }
 
     @FXML

@@ -1,5 +1,9 @@
 package com.github.mjksabit.warehouse.client.model;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 public class Car {
     private String    registrationNumber;
     private int       yearMade;
@@ -72,5 +76,18 @@ public class Car {
 
     public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public void setImage(String filePath) {
+        File file = new File(filePath);
+        try {
+            image = new FileInputStream(file).readAllBytes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public byte[] getImage() {
+        return image;
     }
 }
