@@ -1,6 +1,7 @@
 package com.github.mjksabit.warehouse.client.controller;
 
 import com.github.mjksabit.warehouse.client.JFXLoader;
+import com.github.mjksabit.warehouse.client.network.LoginNetwork;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
@@ -11,9 +12,12 @@ import java.io.IOException;
 
 public class Login extends Controller {
 
+    private LoginNetwork network = new LoginNetwork(this);
+
     public void initialize() {
-        manuUsername.setText("Sabit");
+        manuUsername.setText("sabit");
     }
+
 
     @FXML
     private JFXButton togglerButton;
@@ -25,11 +29,8 @@ public class Login extends Controller {
     private JFXPasswordField manuPassword;
 
     @FXML
-    void manufacturerLogin(ActionEvent event) throws IOException {
-        Menu menu = JFXLoader.loadFXML("menu");
-        menu.init(manuUsername.getText());
-        menu.setStage(getStage());
-        menu.show("MJK Warehouse - " + manuUsername.getText());
+    void manufacturerLogin(ActionEvent event) {
+        network.loginAsManufacturer(manuUsername.getText(), manuPassword.getText());
     }
 
     @FXML
@@ -40,5 +41,12 @@ public class Login extends Controller {
     @FXML
     void viewerLogin(ActionEvent event) {
 
+    }
+
+    public void showHome() throws IOException {
+        Menu menu = JFXLoader.loadFXML("menu");
+        menu.init(manuUsername.getText());
+        menu.setStage(getStage());
+        menu.show("MJK Warehouse - " + manuUsername.getText());
     }
 }

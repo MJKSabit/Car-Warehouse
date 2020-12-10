@@ -40,6 +40,7 @@ public class ResponseSender implements Runnable{
                 waitUntilNew.acquire();
 
                 while (!responseQueue.isEmpty()) {
+                    logger.info("Sending Response");
                     responseQueue.poll().write(out);
                 }
             }

@@ -21,8 +21,8 @@ public class ServerConnect implements Closeable {
 
     InputStream inputStream = null;
     OutputStream outputStream = null;
-    BufferedReader in = null;
-    BufferedWriter out = null;
+    DataInputStream in = null;
+    DataOutputStream out = null;
 
     // Response Listener in a Parallel Thread
     ResponseListener responseListener = null;
@@ -39,8 +39,8 @@ public class ServerConnect implements Closeable {
             // Output Stream to Server
             outputStream = socket.getOutputStream();
 
-            in = new BufferedReader(new InputStreamReader(inputStream));
-            out = new BufferedWriter(new OutputStreamWriter(outputStream));
+            in = new DataInputStream(inputStream);
+            out = new DataOutputStream(outputStream);
 
             // ResponseListen from InputStream
             responseListener = new ResponseListener(in);
@@ -69,15 +69,12 @@ public class ServerConnect implements Closeable {
 
     /**
      * Send Request to Server
-     * @param object    Request JSONObject, Must have a REQUEST_TYPE
+     *     Request JSONObject, Must have a REQUEST_TYPE
      */
-    public void sendRequest(JSONObject object) {
+    public void sendRequest(Data request, ResponseHandler handler) {
         try {
-            // '\n' is a must need for Server to readLine
-            out.write(object.toString()+"\n");
-
-            // Send to Server
-            out.flush();
+            request.write(out);
+            responseListener.addHandler(request.getTYPE(), handler);
         } catch (IOException e) {
             e.printStackTrace();
         }

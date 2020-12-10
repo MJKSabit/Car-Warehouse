@@ -4,6 +4,5 @@ import org.json.JSONObject;
 
 @FunctionalInterface
 public interface ResponseHandler {
-    boolean handle(JSONObject response);
-    default void postHandle() {}
+    void handle(Data response);
 }

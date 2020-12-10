@@ -3,32 +3,26 @@ package com.github.mjksabit.warehouse.client.network;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.DataInputStream;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ResponseListener implements Runnable {
 
-    public static final String RESPONSE_TYPE = "type";
-
     private volatile boolean continueListening = true;
 
-    private final BufferedReader in;
-    private final Map<String, List<ResponseHandler>> handlers = new HashMap<>();
+    private final DataInputStream in;
+    private final Map<String, ResponseHandler> handlers = new HashMap<>();
     private ResponseHandler errorHandler = (response -> {
         System.out.println("Error Handler not initialized");
         System.out.println("ERROR:");
         System.out.println(response.toString());
-        return true;
     });
 
     private final Thread listenerThread;
 
-    public ResponseListener(BufferedReader input) {
+    public ResponseListener(DataInputStream input) {
         this.in = input;
 
         listenerThread = new Thread(this, "ResponseListener");
@@ -36,55 +30,35 @@ public class ResponseListener implements Runnable {
     }
 
     public void addHandler(String RESPONSE_KEY, ResponseHandler handler) {
-        if (!handlers.containsKey(RESPONSE_KEY)) {
-            handlers.put(RESPONSE_KEY,new ArrayList<>());
-        }
-        handlers.get(RESPONSE_KEY).add(handler);
+
+        handlers.put(RESPONSE_KEY, handler);
     }
 
-    public void removeHandler(String RESPONSE_KEY, ResponseHandler handler) {
-        if (handlers.containsKey(RESPONSE_KEY)) {
-            var list = handlers.get(RESPONSE_KEY);
-            if (list != null)
-                list.remove(handler);
-        }
+    public void removeHandler(String RESPONSE_KEY) {
+        handlers.remove(RESPONSE_KEY);
     }
 
     public void setErrorHandler(ResponseHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
 
-    private void handleRequest(String RESPONSE_KEY, JSONObject response) {
-        boolean handled = false;
+    private void handleResponse(Data response) {
 
-        if (handlers.containsKey(RESPONSE_KEY)) {
-            var listeners = handlers.get(RESPONSE_KEY);
-
-            for (var listener : listeners) {
-                if (listener.handle(response)) {
-                    listener.postHandle();
-                    handled = true;
-                    break;
-                }
-            }
-        }
-
-        if (!handled) {
+        if (handlers.containsKey(response.getTYPE())) {
+            handlers.get(response.getTYPE()).handle(response);
+        } else
             errorHandler.handle(response);
-            errorHandler.postHandle();
-        }
+
+        if (response.getText().optBoolean(Data.REMOVE_REQUESTER, false))
+            removeHandler(response.getText().optString(Data.REQUEST_KEY, ""));
     }
 
     @Override
     public void run() {
         while (continueListening) {
             try {
-                String response = in.readLine();
-
-                JSONObject object = new JSONObject(response);
-                String responseType = object.getString(RESPONSE_TYPE);
-
-                handleRequest(responseType, object);
+                Data response = new Data(in);
+                handleResponse(response);
 
             } catch (SocketTimeoutException e) {
                 System.out.println("NO RESPONSE, RESPONSE QUEUE SIZE: "+handlers.size()+", WAITING...");
