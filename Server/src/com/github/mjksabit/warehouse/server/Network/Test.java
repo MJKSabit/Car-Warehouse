@@ -17,13 +17,12 @@ public class Test {
             var in = new DataInputStream(socket.getInputStream());
             var out = new DataOutputStream(socket.getOutputStream());
 
-            Thread.sleep(2000);
-
             new Thread(() -> {
                 while (true) {
                     try {
                         Data data = new Data(in);
                         System.out.println(data.getTYPE());
+                        System.out.println(data.getText().toString(2));
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (JSONException e) {
@@ -31,8 +30,10 @@ public class Test {
                     }
                 }
             }).start();
-
-            new Data("UNKNOWN", new JSONObject("{\"a\":1}"), null).write(out);
+            var object = new JSONObject();
+            object.put(Data.LOGIN_USERNAME, "sabit");
+            object.put(Data.LOGIN_PASSWORD, "12345");
+            new Data(Data.LOGIN, object, null).write(out);
 
         } catch (Exception e) {}
     }

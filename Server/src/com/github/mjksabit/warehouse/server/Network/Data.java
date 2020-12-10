@@ -14,6 +14,16 @@ public class Data {
     private final JSONObject text;
     private final byte[] binary;
 
+    public static final String ERROR = "error";
+    public static final String INFO = "info";
+
+    public static final String LOGIN = "login";
+    public static final String LOGIN_ERROR = "login/error";
+    public static final String LOGIN_SUCCESS = "login/success";
+
+    public static final String LOGIN_USERNAME = "username";
+    public static final String LOGIN_PASSWORD = "password";
+
     public Data(String TYPE, JSONObject text, byte[] binary) {
         this.TYPE = TYPE;
         this.text = text;
