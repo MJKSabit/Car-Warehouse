@@ -2,9 +2,6 @@ package com.github.mjksabit.warehouse.client;
 
 import com.github.mjksabit.warehouse.client.controller.Login;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class FXMain extends Application {
@@ -13,7 +10,7 @@ public class FXMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Login loginPage = JFXLoader.loadFXML("login");
+        Login loginPage = FXUtil.loadFXML("login");
         loginPage.setStage(primaryStage);
 
         loginPage.show("Log in - MJK Warehouse");

@@ -1,11 +1,10 @@
 package com.github.mjksabit.warehouse.client.network;
 
+import com.github.mjksabit.warehouse.client.FXUtil;
 import com.github.mjksabit.warehouse.client.controller.Login;
-import com.jfoenix.controls.JFXDialog;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogEvent;
+import javafx.scene.layout.Pane;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,7 +16,12 @@ public class LoginNetwork {
 
     public LoginNetwork(Login loginController) {
         this.loginController = loginController;
-        setErrorListener();
+
+        ResponseListener responseListener = ServerConnect.getInstance().getResponseListener();
+        responseListener.setErrorHandler(response -> FXUtil.showError(
+                (Pane)loginController.getStage().getScene().getRoot(),
+                response.getText().optString(Data.INFO, "Information not provided"),
+                2000));
     }
 
     public void loginAsManufacturer(String username, String password) {
@@ -33,22 +37,6 @@ public class LoginNetwork {
         ServerConnect.getInstance().sendRequest(request, response -> {
             Platform.runLater(() -> {try { loginController.showHome();} catch (IOException e) {}});
         });
-    }
-
-    public void setErrorListener() {
-//        loginController.getStage().getScene().getRoot()
-        ServerConnect.getInstance().getResponseListener().setErrorHandler( (response) -> {
-            Platform.runLater(() -> {
-                Dialog dialog = new Dialog();
-                dialog.setContentText("Error");
-                dialog.setContentText(response.getText().optString(Data.INFO, "Information not provided"));
-                dialog.show();
-            });
-        });
-    }
-
-    public void showInfo(String info) {
-        //
     }
 
 }
