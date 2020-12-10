@@ -29,6 +29,7 @@ public class Data {
 
     public static final String UPDATE_CAR = "updateCar";
 
+    public static final String VIEW_ALL = "viewAll";
     public static final String BUY_CAR = "buyCar";
 
     public static final String REMOVE_CAR = "removeCar";

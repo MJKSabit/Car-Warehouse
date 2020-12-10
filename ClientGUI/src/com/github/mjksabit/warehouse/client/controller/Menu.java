@@ -1,6 +1,7 @@
 package com.github.mjksabit.warehouse.client.controller;
 
 import com.github.mjksabit.warehouse.client.model.Car;
+import com.github.mjksabit.warehouse.client.network.MenuNetwork;
 import com.github.mjksabit.warehouse.client.view.Card;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
@@ -53,6 +54,8 @@ public class Menu extends Controller {
     @FXML
     private FlowPane carListFlowPane;
 
+    MenuNetwork network;
+
     public void init(String username) {
         usernameLabel.setText(username);
         registrationNo.requestFocus();
@@ -62,11 +65,11 @@ public class Menu extends Controller {
 
         regSearchContainer.setVisible(false);
 
-        var car = new Car("XYZ-123", "Toyota", "Nova", 2020, 10000, "#2A2A2A");
+        network = new MenuNetwork(this);
 
-        car.setImage("./src/com/github/mjksabit/warehouse/client/assets/car.jpeg");
-
-        carListFlowPane.getChildren().add(new Card(car));
+//        var car = new Car("XYZ-123", "Toyota", "Nova", 2020, 10000, "#2A2A2A");
+//        car.setImage("./src/com/github/mjksabit/warehouse/client/assets/car.jpeg");
+//        carListFlowPane.getChildren().add(new Card(car));
 //        carListFlowPane.getChildren().add(new Card());
 //        carListFlowPane.getChildren().add(new Card());
     }
