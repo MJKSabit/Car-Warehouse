@@ -32,7 +32,7 @@ public class Test {
             }).start();
             var object = new JSONObject();
             object.put(Data.LOGIN_USERNAME, "sabit");
-            object.put(Data.LOGIN_PASSWORD, "12345");
+            object.put(Data.LOGIN_PASSWORD, "1234");
             new Data(Data.LOGIN, object, null).write(out);
 
         } catch (Exception e) {}

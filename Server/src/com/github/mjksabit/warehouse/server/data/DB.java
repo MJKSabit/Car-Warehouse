@@ -32,12 +32,12 @@ public class DB {
 
         if (!users.containsKey(username)) {
             jsonObject.put(Data.INFO, "No such user exists!");
-            type = Data.LOGIN_ERROR;
+            type = Data.ERROR;
         } else if (!users.get(username).equals(password)) {
             jsonObject.put(Data.INFO, "Password mismatch!");
-            type = Data.LOGIN_ERROR;
+            type = Data.ERROR;
         } else {
-            type = Data.LOGIN_SUCCESS;
+            type = Data.LOGIN;
             jsonObject.put(Data.INFO, "Welcome back "+username+"!");
         }
 

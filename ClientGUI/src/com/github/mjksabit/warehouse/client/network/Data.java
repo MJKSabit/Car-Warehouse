@@ -1,4 +1,4 @@
-package com.github.mjksabit.warehouse.server.Network;
+package com.github.mjksabit.warehouse.client.network;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -97,3 +97,4 @@ public class Data {
         out.flush();
     }
 }
+

@@ -14,6 +14,7 @@ public class ResponseSender implements Runnable{
 
     DataOutputStream out;
     Closeable client;
+    Thread thread;
 
     volatile Queue<Data> responseQueue;
     Semaphore waitUntilNew = new Semaphore(1);
@@ -23,7 +24,8 @@ public class ResponseSender implements Runnable{
         this.out = out;
         this.client = client;
         this.responseQueue = new LinkedBlockingDeque<>();
-        new Thread(this, "ResponseSender").start();
+        this.thread = new Thread(this, "ResponseSender");
+        this.thread.start();
     }
 
     public void addToQueue(Data data) {
@@ -50,5 +52,9 @@ public class ResponseSender implements Runnable{
                 ioException.printStackTrace();
             }
         }
+    }
+
+    public void renameThread(String threadName) {
+        this.thread.setName(threadName);
     }
 }
