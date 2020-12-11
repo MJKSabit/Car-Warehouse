@@ -122,7 +122,17 @@ public class MenuNetwork {
     }
 
     public void editCar(int id, Car car) {
-        // Communicate with Server
-        cardMap.get(id).setCar(car);
+        try {
+            Data data = car.toData(id);
+            ServerConnect.getInstance().sendRequest(
+                    new Data(Data.EDIT_CAR, data.getText(), data.getBinary()),
+                    response -> System.out.println("Car edited!"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void logout() {
+        ServerConnect.getInstance().sendRequest(new Data(Data.LOGOUT, new JSONObject(), null), response -> System.out.println("Logged Out Successfully!"));
     }
 }

@@ -107,8 +107,11 @@ public class Menu extends Controller {
     }
 
     @FXML
-    void logout(ActionEvent event) {
-
+    void logout(ActionEvent event) throws IOException {
+        network.logout();
+        Login loginPage = FXUtil.loadFXML("login");
+        loginPage.setStage(getStage());
+        loginPage.show("Log in - MJK Warehouse");
     }
 
     private void hideSearchBar() {

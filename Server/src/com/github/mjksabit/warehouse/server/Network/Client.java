@@ -100,7 +100,7 @@ public class Client implements Runnable, Closeable {
 
             case Data.REMOVE_CAR: return removeCar(request);
             case Data.ADD_CAR: return addCar(request);
-//            case Data.EDIT_CAR: return editCar(request);
+            case Data.EDIT_CAR: return editCar(request);
 //
             case Data.VIEW_ALL: return viewCar(request);
             case Data.BUY_CAR: return buyCar(request);
@@ -119,13 +119,41 @@ public class Client implements Runnable, Closeable {
         }
     }
 
-    private Data addCar(Data request) {
+    private Data editCar(Data request) throws JSONException {
+        if (!isManufacturer) {
+            JSONObject object = new JSONObject();
+            object.putOpt(Data.INFO, "Viewer can't edit a car!");
+            return new Data(Data.ERROR, object, null);
+        }
+
+        Data data = DB.getInstance().editCar(request);
+
+        if (!data.getTYPE().equals(Data.ERROR)){
+            notifyAllCar(request.getText().optInt(Data.CAR_ID));
+        }
+
+        return data;
+    }
+
+    private Data addCar(Data request) throws JSONException {
+        if (!isManufacturer) {
+            JSONObject object = new JSONObject();
+            object.putOpt(Data.INFO, "Viewer can't add a car!");
+            return new Data(Data.ERROR, object, null);
+        }
+
         int id = DB.getInstance().addCar(Car.fromData(request));
         notifyAllCar(id);
         return new Data(Data.ADD_CAR, new JSONObject(), null);
     }
 
     private Data removeCar(Data request) throws JSONException {
+        if (!isManufacturer) {
+            JSONObject object = new JSONObject();
+            object.putOpt(Data.INFO, "Viewer can't remove a car!");
+            return new Data(Data.ERROR, object, null);
+        }
+
         boolean isRemoved = DB.getInstance().removeCar(request.getText().optInt(Data.CAR_ID));
         String type;
         JSONObject object = new JSONObject();
@@ -149,7 +177,7 @@ public class Client implements Runnable, Closeable {
             return new Data(Data.ERROR, object, null);
         }
 
-        if (data.getTYPE().equals(Data.BUY_CAR)){
+        if (!data.getTYPE().equals(Data.ERROR)){
             notifyAllCar(request.getText().optInt(Data.CAR_ID));
         }
 
@@ -195,7 +223,7 @@ public class Client implements Runnable, Closeable {
         isAdmin = isManufacturer = false;
         name = null;
 
-        return new Data(Data.LOGOUT, null, null);
+        return new Data(Data.LOGOUT, new JSONObject(), null);
     }
 
 

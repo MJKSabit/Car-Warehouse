@@ -99,4 +99,21 @@ public class DB {
         cars.put(id, car);
         return id;
     }
+
+    public Data editCar(Data request) throws JSONException {
+        int id = request.getText().optInt(Data.CAR_ID);
+        String type;
+        JSONObject jsonObject = new JSONObject();
+
+        if (cars.containsKey(id)) {
+            Car car = Car.fromData(request);
+            cars.put(id, car);
+            type = Data.EDIT_CAR;
+        } else {
+            type = Data.ERROR;
+            jsonObject.put(Data.INFO, "No car found in database");
+        }
+
+        return new Data(type, jsonObject, null);
+    }
 }
