@@ -11,7 +11,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -64,11 +63,7 @@ public class Menu extends Controller {
         cards = carListFlowPane.getChildren();
         network = new MenuNetwork(this, cards);
 
-//        var car = new Car("XYZ-123", "Toyota", "Nova", 2020, 10000, "#2A2A2A");
-//        car.setImage("./src/com/github/mjksabit/warehouse/client/assets/car.jpeg");
-//        carListFlowPane.getChildren().add(new Card(car));
-//        carListFlowPane.getChildren().add(new Card());
-//        carListFlowPane.getChildren().add(new Card());
+
     }
 
     public void asViewer() {
@@ -83,10 +78,22 @@ public class Menu extends Controller {
         addCarButton.setDisable(false);
     }
 
+    public Edit getEdit() {
+        try {
+            Edit edit = FXUtil.loadFXML("edit");
+            edit.setOnSave(actionEvent -> {
+                network.addCar(edit.getCar());
+            });
+            return edit;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @FXML
-    void addCar(ActionEvent event) throws IOException {
-        Edit edit = FXUtil.loadFXML("edit");
-        edit.show("Add Car");
+    void addCar(ActionEvent event){
+        getEdit().show("Add Car");
     }
 
     @FXML

@@ -1,6 +1,7 @@
 package com.github.mjksabit.warehouse.client.network;
 
 import com.github.mjksabit.warehouse.client.FXUtil;
+import com.github.mjksabit.warehouse.client.controller.Edit;
 import com.github.mjksabit.warehouse.client.controller.Menu;
 import com.github.mjksabit.warehouse.client.model.Car;
 import com.github.mjksabit.warehouse.client.view.Card;
@@ -94,7 +95,12 @@ public class MenuNetwork {
             Platform.runLater(() -> cards.add(card));
             cardMap.put(id, card);
             card.setOnBuyListener((actionEvent -> buyCar(id)));
-            card.setManufacturerListener(null, actionEvent -> removeCarRequest(id));
+            card.setManufacturerListener(actionEvent -> {
+                Edit edit = menuController.getEdit();
+                edit.setCar(car);
+                edit.setOnSave(actionEvent1 -> editCar(id, edit.getCar()));
+                edit.show("Edit Car");
+            }, actionEvent -> removeCarRequest(id));
         } else {
             Platform.runLater(() -> cardMap.get(id).setCar(car));
         }
@@ -103,4 +109,13 @@ public class MenuNetwork {
 
     }
 
+    public void addCar(Car car) {
+        // Communicate with Server
+        cards.add(new Card(car));
+    }
+
+    public void editCar(int id, Car car) {
+        // Communicate with Server
+        cardMap.get(id).setCar(car);
+    }
 }
