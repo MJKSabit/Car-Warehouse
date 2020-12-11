@@ -99,7 +99,7 @@ public class Client implements Runnable, Closeable {
             case Data.LOGIN: return login(request);
 
             case Data.REMOVE_CAR: return removeCar(request);
-//            case Data.ADD_CAR: return addCar(request);
+            case Data.ADD_CAR: return addCar(request);
 //            case Data.EDIT_CAR: return editCar(request);
 //
             case Data.VIEW_ALL: return viewCar(request);
@@ -117,6 +117,12 @@ public class Client implements Runnable, Closeable {
                 return new Data(Data.ERROR, object, null);
             }
         }
+    }
+
+    private Data addCar(Data request) {
+        int id = DB.getInstance().addCar(Car.fromData(request));
+        notifyAllCar(id);
+        return new Data(Data.ADD_CAR, new JSONObject(), null);
     }
 
     private Data removeCar(Data request) throws JSONException {

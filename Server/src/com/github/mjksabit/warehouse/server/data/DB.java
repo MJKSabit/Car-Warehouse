@@ -7,10 +7,7 @@ import org.apache.logging.log4j.CloseableThreadContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DB {
 
@@ -28,7 +25,7 @@ public class DB {
         car = new Car("XYZ-123", "BMW", "Nova", 2020, 10000, "#2A2A2A");
         car.setImage("/media/sabit/Data/@CODE/Java/Car-Warehouse/ClientGUI/src/com/github/mjksabit/warehouse/client/assets/car.jpeg");
         car.setLeft(0);
-        cars.put(2, car);
+        cars.put(0, car);
     }
 
     private static DB instance = null;
@@ -91,5 +88,15 @@ public class DB {
             return true;
         }
         return false;
+    }
+
+    private static Random random = new Random();
+    public int addCar(Car car) {
+        int id;
+        do {
+            id = random.nextInt();
+        } while (cars.containsKey(id));
+        cars.put(id, car);
+        return id;
     }
 }

@@ -110,8 +110,15 @@ public class MenuNetwork {
     }
 
     public void addCar(Car car) {
-        // Communicate with Server
-        cards.add(new Card(car));
+        try {
+            Data data = car.toData(-1);
+
+            ServerConnect.getInstance().sendRequest(
+                    new Data(Data.ADD_CAR, data.getText(), data.getBinary()),
+                    response -> System.out.println("Car Added"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void editCar(int id, Car car) {
