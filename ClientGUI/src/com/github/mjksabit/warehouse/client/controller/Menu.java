@@ -4,6 +4,7 @@ import com.github.mjksabit.warehouse.client.model.Car;
 import com.github.mjksabit.warehouse.client.network.MenuNetwork;
 import com.github.mjksabit.warehouse.client.view.Card;
 import com.jfoenix.controls.JFXTextField;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -75,6 +76,14 @@ public class Menu extends Controller {
 //        carListFlowPane.getChildren().add(new Card(car));
 //        carListFlowPane.getChildren().add(new Card());
 //        carListFlowPane.getChildren().add(new Card());
+    }
+
+    public void asViewer() {
+        network.setViewer(true);
+    }
+
+    public void asManufacturer() {
+        Card.setAsViewer(false);
     }
 
     @FXML

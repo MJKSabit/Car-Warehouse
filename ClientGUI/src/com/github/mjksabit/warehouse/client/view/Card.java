@@ -18,6 +18,12 @@ import java.io.IOException;
 
 public class Card extends AnchorPane {
 
+    private static boolean asViewer = true;
+
+    public static void setAsViewer(boolean asViewer) {
+        Card.asViewer = asViewer;
+    }
+
     @FXML
     private ImageView image;
 
@@ -64,6 +70,11 @@ public class Card extends AnchorPane {
             e.printStackTrace();
         }
 
+        viewerOptions.setDisable(!asViewer);
+        viewerOptions.setVisible(asViewer);
+        manuOptions.setDisable(asViewer);
+        manuOptions.setVisible(!asViewer);
+
         setCar(car);
     }
 
@@ -93,9 +104,16 @@ public class Card extends AnchorPane {
     }
 
     public void setLeft(int left) {
-        if (left <= 0)
+        if (left <= 0) {
             quantity.setText("Out of Stock");
-        else
+            quantity.setStyle("-fx-background-color: #F007");
+            viewerOptions.setDisable(true);
+        }
+        else {
             quantity.setText(left+" left");
+            quantity.setStyle("-fx-background-color: #0007");
+            viewerOptions.setDisable(!asViewer);
+        }
+
     }
 }

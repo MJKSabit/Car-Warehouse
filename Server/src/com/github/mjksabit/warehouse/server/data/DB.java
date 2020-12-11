@@ -19,11 +19,16 @@ public class DB {
 
     private DB() {
         users.put("sabit", "1234");
+
         var car = new Car("XYZ-123", "Toyota", "Nova", 2020, 10000, "#2A2A2A");
         car.setImage("/media/sabit/Data/@CODE/Java/Car-Warehouse/ClientGUI/src/com/github/mjksabit/warehouse/client/assets/car.jpeg");
         car.setLeft(10);
         cars.put(1, car);
-//        cars.put(2, new Car("XYZ-1_3", "Toyota", "Nova", 2020, 10000, "#2A2A2A"));
+
+        car = new Car("XYZ-123", "BMW", "Nova", 2020, 10000, "#2A2A2A");
+        car.setImage("/media/sabit/Data/@CODE/Java/Car-Warehouse/ClientGUI/src/com/github/mjksabit/warehouse/client/assets/car.jpeg");
+        car.setLeft(0);
+        cars.put(2, car);
     }
 
     private static DB instance = null;

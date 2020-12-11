@@ -42,6 +42,7 @@ public class Login extends Controller {
     void viewerLogin(ActionEvent event) throws IOException {
         Menu menu = FXUtil.loadFXML("menu");
         menu.init("Viewer");
+        menu.asViewer();
         menu.setStage(getStage());
         menu.show("MJK Warehouse - Buy Car");
     }
@@ -49,6 +50,7 @@ public class Login extends Controller {
     public void showHome() throws IOException {
         Menu menu = FXUtil.loadFXML("menu");
         menu.init(manuUsername.getText());
+        menu.asManufacturer();
         menu.setStage(getStage());
         menu.show("MJK Warehouse - " + manuUsername.getText());
     }

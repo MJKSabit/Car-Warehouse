@@ -62,6 +62,8 @@ public class ResponseListener implements Runnable {
 
             } catch (SocketTimeoutException e) {
                 System.out.println("NO RESPONSE, RESPONSE QUEUE SIZE: "+handlers.size()+", WAITING...");
+                for (String key : handlers.keySet()) System.out.printf("%s ", key);
+                System.out.println();
             }
             catch (Exception e) {
                 // Disconnected!!!
