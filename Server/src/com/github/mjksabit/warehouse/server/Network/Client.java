@@ -70,28 +70,28 @@ public class Client implements Runnable, Closeable {
 
     }
 
-    private static Data carUpdate(int id, Car car) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put(Data.CAR_ID, id);
-            object.put(Data.CAR, Util.jsonFromCar(car));
-        } catch (JSONException e) {}
-        return new Data(Data.UPDATE_CAR, object, null);
-    }
+//    private static Data carUpdate(int id, Car car) {
+//        JSONObject object = new JSONObject();
+//        try {
+//            object.put(Data.CAR_ID, id);
+//            object.put(Data.CAR, Util.jsonFromCar(car));
+//        } catch (JSONException e) {}
+//        return new Data(Data.UPDATE_CAR, object, null);
+//    }
+//
+//    // null means deleted
+//    public static void notifyAllCar(int id, Car car) {
+//        Data carData = carUpdate(id, car);
+//
+//        for (var client : clients)
+//            if (!client.isAdmin)
+//                client.sender.addToQueue(carData);
+//    }
 
-    // null means deleted
-    public static void notifyAllCar(int id, Car car) {
-        Data carData = carUpdate(id, car);
-
-        for (var client : clients)
-            if (!client.isAdmin)
-                client.sender.addToQueue(carData);
-    }
-
-    // Implement
-    public static void notifyAllUsers(int id, User user) {
-
-    }
+//    // Implement
+//    public static void notifyAllUsers(int id, User user) {
+//
+//    }
 
     private Data route(Data request) throws JSONException {
         switch (request.getTYPE()) {
@@ -101,6 +101,7 @@ public class Client implements Runnable, Closeable {
 //            case Data.ADD_CAR: return addCar(request);
 //            case Data.EDIT_CAR: return editCar(request);
 //
+            case Data.VIEW_ALL: return viewCar(request);
 //            case Data.BUY_CAR: return buyCar(request);
 //
 //            case Data.ADMIN: return admin(request);
@@ -115,6 +116,20 @@ public class Client implements Runnable, Closeable {
                 return new Data(Data.ERROR, object, null);
             }
         }
+    }
+
+    private Data viewCar(Data request) {
+        new Thread( () -> {
+            try {
+                var cars = DB.getInstance().allCars();
+                for (var car: cars)
+                    sender.addToQueue(car);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        return new Data(Data.VIEW_ALL, new JSONObject(), null);
     }
 
     private Data login(Data request) throws JSONException {

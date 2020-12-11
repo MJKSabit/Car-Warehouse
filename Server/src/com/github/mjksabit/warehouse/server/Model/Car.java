@@ -1,5 +1,14 @@
 package com.github.mjksabit.warehouse.server.Model;
 
+import com.github.mjksabit.warehouse.server.Network.Data;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 public class Car {
     private String    registrationNumber;
     private int       yearMade;
@@ -8,6 +17,15 @@ public class Car {
     private String    model;
     private int       price;
     private byte[]    image;
+    private int       left;
+
+    public int getLeft() {
+        return left;
+    }
+
+    public void setLeft(int left) {
+        this.left = left;
+    }
 
     public Car(String registrationNumber, String make, String model, int yearMade, int price, String... colors) {
         this.registrationNumber = registrationNumber;
@@ -72,5 +90,75 @@ public class Car {
 
     public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public void setImage(String filePath) {
+        File file = new File(filePath);
+        try {
+            image = new FileInputStream(file).readAllBytes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+
+    private static final String    REG_NO = "regNo";
+    private static final String    YEAR = "year";
+    private static final String    COLORS = "colors";
+    private static final String    MAKE = "make";
+    private static final String    MODEL = "model";
+    private static final String    PRICE = "price";
+    private static final String    LEFT = "left";
+
+    public static final String     CAR = "car";
+    public static final String     ID = "id";
+
+    public Data toData(int id) throws JSONException {
+        JSONObject object = new JSONObject();
+
+        object.put(REG_NO, registrationNumber);
+        object.put(YEAR, yearMade);
+
+        var color = new JSONArray();
+        color.put(colors[0]);
+        color.put(colors[1]);
+        color.put(colors[2]);
+        object.put(COLORS, color);
+
+        object.put(PRICE, price);
+        object.put(MAKE, model);
+        object.put(MODEL, model);
+        object.put(LEFT, left);
+
+        JSONObject root = new JSONObject();
+        root.put(CAR, object);
+        root.put(ID, id);
+
+        return new Data(Data.UPDATE_CAR, root, image);
+    }
+
+    public static Car fromData(Data data) {
+        JSONObject object = data.getText().optJSONObject(CAR);
+
+        Car car = new Car(
+                object.optString(REG_NO),
+                object.optString(MAKE),
+                object.optString(MODEL),
+                object.optInt(YEAR),
+                object.optInt(PRICE),
+                object.optJSONArray(COLORS).optString(0),
+                object.optJSONArray(COLORS).optString(1),
+                object.optJSONArray(COLORS).optString(2)
+        );
+
+        car.left = object.optInt(LEFT, 0);
+
+        car.setImage(data.getBinary());
+
+        return car;
     }
 }

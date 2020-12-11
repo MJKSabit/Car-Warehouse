@@ -77,7 +77,7 @@ public class Card extends AnchorPane {
         yearMade.setText(car.getYearMade()+"");
 
         for (int i = 0; i < 3; i++) {
-            if (car.getColors()[i] != null) {
+            if (!car.getColors()[i].equals("null")) {
                 circles[i].setFill(Color.valueOf(car.getColors()[i]));
                 circles[i].setStroke(Color.valueOf("#000000"));
             } else {
@@ -88,5 +88,14 @@ public class Card extends AnchorPane {
 
         if(car.getImage() != null)
             image.setImage(new Image(new ByteArrayInputStream(car.getImage())));
+
+        setLeft(car.getLeft());
+    }
+
+    public void setLeft(int left) {
+        if (left <= 0)
+            quantity.setText("Out of Stock");
+        else
+            quantity.setText(left+" left");
     }
 }

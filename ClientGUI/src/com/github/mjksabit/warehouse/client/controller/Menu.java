@@ -4,8 +4,10 @@ import com.github.mjksabit.warehouse.client.model.Car;
 import com.github.mjksabit.warehouse.client.network.MenuNetwork;
 import com.github.mjksabit.warehouse.client.view.Card;
 import com.jfoenix.controls.JFXTextField;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
@@ -55,6 +57,7 @@ public class Menu extends Controller {
     private FlowPane carListFlowPane;
 
     MenuNetwork network;
+    ObservableList<Node> cards;
 
     public void init(String username) {
         usernameLabel.setText(username);
@@ -64,8 +67,8 @@ public class Menu extends Controller {
         makeSearchContainer.managedProperty().bind(makeSearchContainer.visibleProperty());
 
         regSearchContainer.setVisible(false);
-
-        network = new MenuNetwork(this);
+        cards = carListFlowPane.getChildren();
+        network = new MenuNetwork(this, cards);
 
 //        var car = new Car("XYZ-123", "Toyota", "Nova", 2020, 10000, "#2A2A2A");
 //        car.setImage("./src/com/github/mjksabit/warehouse/client/assets/car.jpeg");
