@@ -26,10 +26,12 @@ public abstract class Controller {
     public void show(String title) {
         if (getStage() == null) {
             setStage(new Stage());
+            getStage().setTitle(title);
+            getStage().showAndWait();
+        } else {
+            getStage().setTitle(title);
+            getStage().sizeToScene();
+            getStage().show();
         }
-
-        getStage().setTitle(title);
-        getStage().sizeToScene();
-        getStage().show();
     }
 }

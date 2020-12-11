@@ -1,5 +1,6 @@
 package com.github.mjksabit.warehouse.client.controller;
 
+import com.github.mjksabit.warehouse.client.FXUtil;
 import com.github.mjksabit.warehouse.client.network.MenuNetwork;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
@@ -10,6 +11,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class Menu extends Controller {
 
@@ -80,8 +84,9 @@ public class Menu extends Controller {
     }
 
     @FXML
-    void addCar(ActionEvent event) {
-
+    void addCar(ActionEvent event) throws IOException {
+        Edit edit = FXUtil.loadFXML("edit");
+        edit.show("Add Car");
     }
 
     @FXML

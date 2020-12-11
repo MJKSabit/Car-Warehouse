@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXColorPicker?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="382.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.mjksabit.warehouse.client.controller.Edit">
+   <children>
+      <ImageView fx:id="image" fitHeight="200.0" fitWidth="200.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/car.jpeg" />
+         </image>
+      </ImageView>
+      <JFXButton graphicTextGap="10.0" layoutX="75.0" layoutY="192.0" onAction="#chooseFile" style="-fx-border-color: #000; -fx-border-radius: 10px; -fx-background-color: #FFF; -fx-background-radius: 10px;" text="Edit">
+         <graphic>
+            <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/edit.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </JFXButton>
+      <JFXTextField fx:id="carMake" labelFloat="true" layoutX="233.0" layoutY="39.0" promptText="Car Make" />
+      <JFXTextField fx:id="yearMade" labelFloat="true" layoutX="407.0" layoutY="37.0" prefHeight="28.0" prefWidth="168.0" promptText="Year Made" />
+      <JFXTextField fx:id="model" labelFloat="true" layoutX="233.0" layoutY="107.0" prefHeight="39.0" prefWidth="342.0" promptText="Model" />
+      <JFXTextField fx:id="regNo" labelFloat="true" layoutX="233.0" layoutY="180.0" prefHeight="39.0" prefWidth="342.0" promptText="Registration No" />
+      <JFXColorPicker fx:id="color1" layoutX="361.0" layoutY="277.0" prefWidth="69.0" />
+      <JFXColorPicker fx:id="color2" layoutX="501.0" layoutY="277.0" prefWidth="69.0" />
+      <JFXColorPicker fx:id="color3" layoutX="431.0" layoutY="277.0" prefWidth="69.0" />
+      <JFXTextField fx:id="price" labelFloat="true" layoutX="19.0" layoutY="275.0" promptText="Yead Made" />
+      <JFXTextField fx:id="stock" labelFloat="true" layoutX="192.0" layoutY="275.0" promptText="Stock" />
+      <JFXButton fx:id="save" layoutX="457.0" layoutY="337.0" text="Save" />
+      <JFXButton layoutX="518.0" layoutY="337.0" onAction="#cancel" text="Cancel" />
+   </children>
+</AnchorPane>
