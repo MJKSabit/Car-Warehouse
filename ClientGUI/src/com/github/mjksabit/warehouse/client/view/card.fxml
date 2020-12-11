@@ -71,7 +71,7 @@
       </Label>
       <Pane fx:id="viewerOptions" layoutX="226.0" layoutY="333.0" prefHeight="30.0" prefWidth="99.0" AnchorPane.rightAnchor="10.0">
          <children>
-            <JFXButton layoutX="35.0" layoutY="1.0" style="-fx-background-color: #99F3BD;" text="Buy">
+            <JFXButton fx:id="buyButton" layoutX="35.0" layoutY="1.0" style="-fx-background-color: #99F3BD;" text="Buy">
                <graphic>
                   <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -84,7 +84,7 @@
       </Pane>
       <Pane fx:id="manuOptions" layoutX="140.0" layoutY="333.0" prefHeight="30.0" prefWidth="99.0">
          <children>
-            <JFXButton layoutX="35.0" layoutY="1.0" style="-fx-background-color: #99F3BD;" text="Edit">
+            <JFXButton fx:id="editButton" layoutX="35.0" layoutY="1.0" style="-fx-background-color: #99F3BD;" text="Edit">
                <graphic>
                   <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -93,7 +93,7 @@
                   </ImageView>
                </graphic>
             </JFXButton>
-            <JFXButton contentDisplay="GRAPHIC_ONLY" layoutX="-3.0" layoutY="1.0" style="-fx-background-color: #FE8282;" text="Delete">
+            <JFXButton fx:id="deleteButton" contentDisplay="GRAPHIC_ONLY" layoutX="-3.0" layoutY="1.0" style="-fx-background-color: #FE8282;" text="Delete">
                <graphic>
                   <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                      <image>

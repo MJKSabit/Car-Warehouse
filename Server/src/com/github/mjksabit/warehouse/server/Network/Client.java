@@ -70,28 +70,29 @@ public class Client implements Runnable, Closeable {
 
     }
 
-//    private static Data carUpdate(int id, Car car) {
-//        JSONObject object = new JSONObject();
-//        try {
-//            object.put(Data.CAR_ID, id);
-//            object.put(Data.CAR, Util.jsonFromCar(car));
-//        } catch (JSONException e) {}
-//        return new Data(Data.UPDATE_CAR, object, null);
-//    }
-//
-//    // null means deleted
-//    public static void notifyAllCar(int id, Car car) {
-//        Data carData = carUpdate(id, car);
-//
-//        for (var client : clients)
-//            if (!client.isAdmin)
-//                client.sender.addToQueue(carData);
-//    }
+    private static Data carUpdate(int id) throws JSONException {
+        Car car = DB.getInstance().getCar(id);
 
-//    // Implement
-//    public static void notifyAllUsers(int id, User user) {
-//
-//    }
+        if (car != null)
+            return car.toData(id);
+        else {
+            JSONObject object = new JSONObject();
+            object.put(Data.CAR_ID, id);
+            return new Data(Data.DELETE_CAR, object, null);
+        }
+    }
+
+    // null means deleted
+    public static void notifyAllCar(int id) {
+        try {
+            var carData = carUpdate(id);
+            for (var client : clients)
+                if (!client.isAdmin)
+                    client.sender.addToQueue(carData);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     private Data route(Data request) throws JSONException {
         switch (request.getTYPE()) {
@@ -102,7 +103,7 @@ public class Client implements Runnable, Closeable {
 //            case Data.EDIT_CAR: return editCar(request);
 //
             case Data.VIEW_ALL: return viewCar(request);
-//            case Data.BUY_CAR: return buyCar(request);
+            case Data.BUY_CAR: return buyCar(request);
 //
 //            case Data.ADMIN: return admin(request);
 //            case Data.ADD_USER: return addUser(request);
@@ -116,6 +117,22 @@ public class Client implements Runnable, Closeable {
                 return new Data(Data.ERROR, object, null);
             }
         }
+    }
+
+    private Data buyCar(Data request) throws JSONException {
+        Data data = DB.getInstance().buyCar(request.getText().optInt(Data.CAR_ID));
+
+        if (isManufacturer) {
+            JSONObject object = new JSONObject();
+            object.putOpt(Data.INFO, "Manufacturer can't buy.");
+            return new Data(Data.ERROR, object, null);
+        }
+
+        if (data.getTYPE().equals(Data.BUY_CAR)){
+            notifyAllCar(request.getText().optInt(Data.CAR_ID));
+        }
+
+        return data;
     }
 
     private Data viewCar(Data request) {

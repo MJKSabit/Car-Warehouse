@@ -114,8 +114,8 @@ public class Car {
     private static final String    PRICE = "price";
     private static final String    LEFT = "left";
 
-    public static final String     CAR = "car";
-    public static final String     ID = "id";
+    public static final String     CAR = Data.CAR;
+    public static final String     ID = Data.CAR_ID;
 
     public Data toData(int id) throws JSONException {
         JSONObject object = new JSONObject();
@@ -130,7 +130,7 @@ public class Car {
         object.put(COLORS, color);
 
         object.put(PRICE, price);
-        object.put(MAKE, model);
+        object.put(MAKE, make);
         object.put(MODEL, model);
         object.put(LEFT, left);
 

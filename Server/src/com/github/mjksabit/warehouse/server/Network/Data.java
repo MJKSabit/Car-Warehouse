@@ -28,6 +28,7 @@ public class Data {
     public static final String LOGIN_PASSWORD = "password";
 
     public static final String UPDATE_CAR = "updateCar";
+    public static final String DELETE_CAR = "deleteCar";
 
     public static final String VIEW_ALL = "viewAll";
     public static final String BUY_CAR = "buyCar";

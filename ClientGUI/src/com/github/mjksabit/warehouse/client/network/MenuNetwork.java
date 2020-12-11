@@ -8,6 +8,8 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,10 +35,10 @@ public class MenuNetwork {
                 2000));
 
         ServerConnect.getInstance().getResponseListener().addHandler(Data.UPDATE_CAR, response -> {
+            System.out.println("Car from Network: " + response.getText());
             final Car car = Car.fromData(response);
-            System.out.println("Adding New Car from Network.");
 //            Platform.runLater(() -> cards.add(new Card(car)));
-            updateCar(/*response.getText().optInt(Car.ID)*/1, car);
+            updateCar(response.getText().optInt(Car.ID), car);
         });
 
         ServerConnect.getInstance().sendRequest(new Data(Data.VIEW_ALL, null, null),
@@ -45,7 +47,21 @@ public class MenuNetwork {
 
     public void setViewer(boolean viewer) {
         isViewer = viewer;
-        Card.setAsViewer(true);
+        Card.setAsViewer(viewer);
+    }
+
+    private void buyCar(int id) {
+        System.out.println("BUYING CAR with ID "+id);
+        JSONObject object = new JSONObject();
+        try {
+            object.put(Data.CAR_ID, id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Data data = new Data(Data.BUY_CAR, object, null);
+        ServerConnect.getInstance().sendRequest(data, response -> {
+            System.out.println(response.getTYPE());
+        });
     }
 
     public void updateCar(int id, Car car) {
@@ -53,8 +69,10 @@ public class MenuNetwork {
             Card card = new Card(car);
             Platform.runLater(() -> cards.add(card));
             cardMap.put(id, card);
-        } else
+            card.setOnBuyListener((actionEvent -> buyCar(id)));
+        } else {
             Platform.runLater(() -> cardMap.get(id).setCar(car));
+        }
 
         cars.put(id, car);
 

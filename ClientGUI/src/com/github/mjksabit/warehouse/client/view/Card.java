@@ -1,7 +1,11 @@
 package com.github.mjksabit.warehouse.client.view;
 
 import com.github.mjksabit.warehouse.client.FXUtil;
+import com.github.mjksabit.warehouse.client.controller.Menu;
 import com.github.mjksabit.warehouse.client.model.Car;
+import com.jfoenix.controls.JFXButton;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -15,6 +19,7 @@ import javafx.scene.shape.Circle;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.function.Function;
 
 public class Card extends AnchorPane {
 
@@ -58,7 +63,16 @@ public class Card extends AnchorPane {
     private Pane viewerOptions;
 
     @FXML
+    private JFXButton buyButton;
+
+    @FXML
     private Pane manuOptions;
+
+    @FXML
+    private JFXButton editButton;
+
+    @FXML
+    private JFXButton deleteButton;
 
     public Card(Car car) {
         FXMLLoader loader = FXUtil.getFXMLLoader("card");
@@ -79,7 +93,7 @@ public class Card extends AnchorPane {
     }
 
     public void setCar(Car car) {
-        Circle[] circles = {color1, color2, color3};
+        Circle[] circles = {color3, color2, color1};
 
         carMake.setText(car.getMake());
         carModel.setText(car.getModel());
@@ -90,10 +104,9 @@ public class Card extends AnchorPane {
         for (int i = 0; i < 3; i++) {
             if (!car.getColors()[i].equals("null")) {
                 circles[i].setFill(Color.valueOf(car.getColors()[i]));
-                circles[i].setStroke(Color.valueOf("#000000"));
+                circles[i].setVisible(true);
             } else {
-                circles[i].setFill(Paint.valueOf("#00000000"));
-                circles[i].setStroke(Color.valueOf("#00000000"));
+                circles[i].setVisible(false);
             }
         }
 
@@ -115,5 +128,9 @@ public class Card extends AnchorPane {
             viewerOptions.setDisable(!asViewer);
         }
 
+    }
+
+    public void setOnBuyListener(EventHandler<ActionEvent> buyListener) {
+        buyButton.setOnAction(buyListener);
     }
 }

@@ -58,11 +58,30 @@ public class DB {
         return new Data(type, jsonObject, null);
     }
 
+    public synchronized Data buyCar(int id) throws JSONException {
+        String type;
+        JSONObject jsonObject = new JSONObject();
+
+        if (!cars.containsKey(id) || cars.get(id).getLeft()<=0) {
+            type = Data.ERROR;
+            jsonObject.put(Data.INFO, "Car not available");
+        } else {
+            type = Data.BUY_CAR;
+            cars.get(id).setLeft(cars.get(id).getLeft()-1);
+        }
+
+        return new Data(type, jsonObject, null);
+    }
+
     public ArrayList<Data> allCars() throws JSONException {
         ArrayList<Data> carData = new ArrayList<>();
         for ( var key : cars.keySet()) {
             carData.add(cars.get(key).toData(key));
         }
         return carData;
+    }
+
+    public Car getCar(int id) {
+        return cars.getOrDefault(id, null);
     }
 }
