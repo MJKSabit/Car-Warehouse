@@ -78,7 +78,7 @@ public class Client implements Runnable, Closeable {
         else {
             JSONObject object = new JSONObject();
             object.put(Data.CAR_ID, id);
-            return new Data(Data.DELETE_CAR, object, null);
+            return new Data(Data.UPDATE_CAR, object, null);
         }
     }
 
@@ -98,7 +98,7 @@ public class Client implements Runnable, Closeable {
         switch (request.getTYPE()) {
             case Data.LOGIN: return login(request);
 
-//            case Data.REMOVE_CAR: return removeCar(request);
+            case Data.REMOVE_CAR: return removeCar(request);
 //            case Data.ADD_CAR: return addCar(request);
 //            case Data.EDIT_CAR: return editCar(request);
 //
@@ -117,6 +117,21 @@ public class Client implements Runnable, Closeable {
                 return new Data(Data.ERROR, object, null);
             }
         }
+    }
+
+    private Data removeCar(Data request) throws JSONException {
+        boolean isRemoved = DB.getInstance().removeCar(request.getText().optInt(Data.CAR_ID));
+        String type;
+        JSONObject object = new JSONObject();
+
+        if (isRemoved)
+            type = Data.REMOVE_CAR;
+        else {
+            type = Data.ERROR;
+            object.put(Data.INFO, "Car can not be deleted.");
+        }
+        notifyAllCar(request.getText().optInt(Data.CAR_ID));
+        return new Data(type, object, null);
     }
 
     private Data buyCar(Data request) throws JSONException {

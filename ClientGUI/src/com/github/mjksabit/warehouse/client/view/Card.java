@@ -133,4 +133,9 @@ public class Card extends AnchorPane {
     public void setOnBuyListener(EventHandler<ActionEvent> buyListener) {
         buyButton.setOnAction(buyListener);
     }
+
+    public void setManufacturerListener(EventHandler<ActionEvent> edit, EventHandler<ActionEvent> remove) {
+        editButton.setOnAction(edit);
+        deleteButton.setOnAction(remove);
+    }
 }

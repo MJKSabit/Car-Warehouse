@@ -84,4 +84,12 @@ public class DB {
     public Car getCar(int id) {
         return cars.getOrDefault(id, null);
     }
+
+    public boolean removeCar(int id) {
+        if (cars.containsKey(id)) {
+            cars.remove(id);
+            return true;
+        }
+        return false;
+    }
 }

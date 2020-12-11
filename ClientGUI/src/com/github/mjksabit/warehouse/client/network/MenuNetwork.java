@@ -29,20 +29,30 @@ public class MenuNetwork {
         this.cards = cards;
 
         ResponseListener responseListener = ServerConnect.getInstance().getResponseListener();
+
         responseListener.setErrorHandler(response -> FXUtil.showError(
                 (Pane) menuController.getStage().getScene().getRoot(),
                 response.getText().optString(Data.INFO, "Information not provided"),
                 2000));
 
-        ServerConnect.getInstance().getResponseListener().addHandler(Data.UPDATE_CAR, response -> {
+        responseListener.addHandler(Data.UPDATE_CAR, response -> {
             System.out.println("Car from Network: " + response.getText());
-            final Car car = Car.fromData(response);
-//            Platform.runLater(() -> cards.add(new Card(car)));
-            updateCar(response.getText().optInt(Car.ID), car);
+            if (!response.getText().has(Data.CAR)) {
+                System.out.println("REMOVE CAR!!!");
+                removeCar(response.getText().optInt(Data.CAR_ID));
+            } else {
+                final Car car = Car.fromData(response);
+                updateCar(response.getText().optInt(Car.ID), car);
+            }
         });
 
         ServerConnect.getInstance().sendRequest(new Data(Data.VIEW_ALL, null, null),
-                (response -> System.out.println(response.getTYPE())));
+                response -> {});
+    }
+
+    private void removeCar(int id) {
+        if (cars.containsKey(id) && cardMap.containsKey(id))
+            Platform.runLater(() -> cards.remove(cardMap.remove(id)));
     }
 
     public void setViewer(boolean viewer) {
@@ -64,12 +74,27 @@ public class MenuNetwork {
         });
     }
 
+    private void removeCarRequest(int id) {
+        System.out.println("Removing CAR with ID "+ id);
+        JSONObject object = new JSONObject();
+        try {
+            object.put(Data.CAR_ID, id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Data data = new Data(Data.REMOVE_CAR, object, null);
+        ServerConnect.getInstance().sendRequest(data, response -> {
+            System.out.println(response.getTYPE());
+        });
+    }
+
     public void updateCar(int id, Car car) {
         if (!cars.containsKey(id)) {
             Card card = new Card(car);
             Platform.runLater(() -> cards.add(card));
             cardMap.put(id, card);
             card.setOnBuyListener((actionEvent -> buyCar(id)));
+            card.setManufacturerListener(null, actionEvent -> removeCarRequest(id));
         } else {
             Platform.runLater(() -> cardMap.get(id).setCar(car));
         }
