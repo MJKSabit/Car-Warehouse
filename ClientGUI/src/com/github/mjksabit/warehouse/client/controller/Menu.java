@@ -1,10 +1,8 @@
 package com.github.mjksabit.warehouse.client.controller;
 
-import com.github.mjksabit.warehouse.client.model.Car;
 import com.github.mjksabit.warehouse.client.network.MenuNetwork;
-import com.github.mjksabit.warehouse.client.view.Card;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,32 +10,23 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 public class Menu extends Controller {
 
     @FXML
-    private Pane toggleButtonGraphics;
+    private JFXButton addCarButton;
 
     @FXML
-    private Label usernameLabel;
+    private JFXButton regSearchTab;
+
+    @FXML
+    private JFXButton makeSearchTab;
 
     @FXML
     private AnchorPane sidePane;
 
     @FXML
-    private Pane logoutButton;
-
-    @FXML
-    private Pane searchbyRegButton;
-
-    @FXML
-    private Pane searchByMakeButton;
+    private Label usernameLabel;
 
     @FXML
     private AnchorPane regSearchContainer;
@@ -62,12 +51,12 @@ public class Menu extends Controller {
 
     public void init(String username) {
         usernameLabel.setText(username);
-        registrationNo.requestFocus();
 
         regSearchContainer.managedProperty().bind(regSearchContainer.visibleProperty());
         makeSearchContainer.managedProperty().bind(makeSearchContainer.visibleProperty());
 
-        regSearchContainer.setVisible(false);
+        hideSearchBar();
+
         cards = carListFlowPane.getChildren();
         network = new MenuNetwork(this, cards);
 
@@ -80,20 +69,45 @@ public class Menu extends Controller {
 
     public void asViewer() {
         network.setViewer(true);
+        addCarButton.setVisible(false);
+        addCarButton.setDisable(true);
     }
 
     public void asManufacturer() {
-        Card.setAsViewer(false);
+        network.setViewer(false);
+        addCarButton.setVisible(true);
+        addCarButton.setDisable(false);
+    }
+
+    @FXML
+    void addCar(ActionEvent event) {
+
     }
 
     @FXML
     void closeSearchByMakeModel(ActionEvent event) {
-
+        hideSearchBar();
     }
 
     @FXML
     void closeSearchByReg(ActionEvent event) {
+        hideSearchBar();
+    }
 
+    @FXML
+    void logout(ActionEvent event) {
+
+    }
+
+    private void hideSearchBar() {
+        makeSearchContainer.setVisible(false);
+        regSearchContainer.setVisible(false);
+    }
+
+    @FXML
+    void showSearchByMake(ActionEvent event) {
+        hideSearchBar();
+        makeSearchContainer.setVisible(true);
     }
 
     @FXML
@@ -107,7 +121,8 @@ public class Menu extends Controller {
     }
 
     @FXML
-    void toggleSideMenu(ActionEvent event) {
-
+    void showSearchByReg(ActionEvent event) {
+        hideSearchBar();
+        regSearchContainer.setVisible(true);
     }
 }
