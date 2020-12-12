@@ -10,9 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 public class DB {
@@ -20,6 +18,47 @@ public class DB {
     private static Logger logger = LogManager.getLogger(DB.class);
 
     public static final String DATABASE_FILE = "database.db";
+
+    /*
+    CREATE TABLE "users" (
+	    "username"	TEXT NOT NULL,
+	    "password"	TEXT NOT NULL,
+	    PRIMARY KEY("username")
+    )
+     */
+
+    public static final String USER_TABLE = "users";
+    public static final String USER_USERNAME = "username";
+    public static final String USER_PASSWORD = "password";
+
+    /*
+    CREATE TABLE "cars" (
+	    "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	    "registrationNumber"	TEXT NOT NULL,
+	    "make"	TEXT NOT NULL,
+    	"model"	TEXT NOT NULL,
+    	"year"	INTEGER NOT NULL,
+    	"price"	INTEGER NOT NULL,
+    	"available"	INTEGER NOT NULL DEFAULT 0,
+    	"color1"	TEXT DEFAULT NULL,
+	    "color2"	TEXT DEFAULT NULL,
+    	"color3"	TEXT DEFAULT NULL,
+    	"image"	TEXT NOT NULL
+    )
+     */
+
+    public static final String CAR_TABLE = "cars";
+    public static final String CAR_ID = "id";
+    public static final String CAR_REG_NO = "registrationNumber";
+    public static final String CAR_MAKE = "make";
+    public static final String CAR_MODEL = "model";
+    public static final String CAR_YEAR = "year";
+    public static final String CAR_PRICE = "price";
+    public static final String CAR_AVAILABLE = "available";
+    public static final String CAR_IMAGE = "image";
+    public static final String CAR_COLOR_1 = "color1";
+    public static final String CAR_COLOR_2 = "color2";
+    public static final String CAR_COLOR_3 = "color3";
 
     private Map<String, String> users = new HashMap<>();
     private Map<Integer, Car> cars = new HashMap<>();
@@ -71,15 +110,27 @@ public class DB {
         String type;
         JSONObject jsonObject = new JSONObject();
 
-        if (!users.containsKey(username)) {
+        String query = "SELECT " +
+                    USER_PASSWORD +
+                " from " + USER_TABLE +
+                " where " +
+                    USER_USERNAME + " = ?";
+
+        try(PreparedStatement statement = dbConnect.prepareStatement(query)){
+            statement.setString(1, username);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next() && resultSet.getString(USER_PASSWORD).equals(password)) {
+                type = Data.LOGIN;
+                jsonObject.put(Data.INFO, "Welcome back "+username+"!");
+            } else {
+                jsonObject.put(Data.INFO, "Password mismatch!");
+                type = Data.ERROR;
+            }
+        } catch (SQLException throwables) {
             jsonObject.put(Data.INFO, "No such user exists!");
             type = Data.ERROR;
-        } else if (!users.get(username).equals(password)) {
-            jsonObject.put(Data.INFO, "Password mismatch!");
-            type = Data.ERROR;
-        } else {
-            type = Data.LOGIN;
-            jsonObject.put(Data.INFO, "Welcome back "+username+"!");
         }
 
         return new Data(type, jsonObject, null);
