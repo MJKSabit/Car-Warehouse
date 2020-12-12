@@ -6,10 +6,14 @@ import com.github.mjksabit.warehouse.server.Network.Data;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.util.UuidUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
@@ -18,6 +22,7 @@ public class DB {
     private static Logger logger = LogManager.getLogger(DB.class);
 
     public static final String DATABASE_FILE = "database.db";
+    public static final String IMAGE_PATH = "images";
 
     /*
     CREATE TABLE "users" (
@@ -33,7 +38,7 @@ public class DB {
 
     /*
     CREATE TABLE "cars" (
-	    "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	    "carid"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	    "registrationNumber"	TEXT NOT NULL,
 	    "make"	TEXT NOT NULL,
     	"model"	TEXT NOT NULL,
@@ -48,7 +53,7 @@ public class DB {
      */
 
     public static final String CAR_TABLE = "cars";
-    public static final String CAR_ID = "id";
+    public static final String CAR_ID = "carid";
     public static final String CAR_REG_NO = "registrationNumber";
     public static final String CAR_MAKE = "make";
     public static final String CAR_MODEL = "model";
@@ -171,14 +176,61 @@ public class DB {
         return false;
     }
 
-    private static Random random = new Random();
     public int addCar(Car car) {
-        int id;
-        do {
-            id = random.nextInt();
-        } while (cars.containsKey(id));
-        cars.put(id, car);
-        return id;
+
+        String uuid = UuidUtil.getTimeBasedUuid().toString();
+        try {
+//            File image = new File(IMAGE_PATH+File.pathSeparator+uuid);
+//            image.createNewFile();
+            FileOutputStream fos = new FileOutputStream(IMAGE_PATH+File.separator+uuid, true);
+            fos.write(car.getImage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String query = "INSERT INTO " +
+                CAR_TABLE +
+                " (" +
+                    CAR_REG_NO + ", " +
+                    CAR_MAKE + ", " +
+                    CAR_MODEL + ", " +
+                    CAR_YEAR + ", " +
+                    CAR_PRICE + ", " +
+                    CAR_AVAILABLE + ", " +
+                    CAR_COLOR_1 + ", " +
+                    CAR_COLOR_2 + ", " +
+                    CAR_COLOR_3 + ", " +
+                    CAR_IMAGE +
+                ") " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try(PreparedStatement statement = dbConnect.prepareStatement(query)) {
+            statement.setString(1, car.getRegistrationNumber());
+            statement.setString(2, car.getMake());
+            statement.setString(3, car.getModel());
+            statement.setInt(4, car.getYearMade());
+            statement.setInt(5, car.getPrice());
+            statement.setInt(6, car.getLeft());
+            statement.setString(7, car.getColors()[0]);
+            statement.setString(8, car.getColors()[1]);
+            statement.setString(9, car.getColors()[2]);
+            statement.setString(10, uuid);
+
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating car failed, no rows affected.");
+            }
+
+            ResultSet resultSet = statement.getGeneratedKeys();
+            int id = resultSet.getInt(1);
+            logger.info("Added New Car with id "+id);
+            return id;
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return -1;
+        }
     }
 
     public Data editCar(Data request) throws JSONException {
