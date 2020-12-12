@@ -3,6 +3,7 @@ package com.github.mjksabit.warehouse.client.controller;
 import com.github.mjksabit.warehouse.client.FXMain;
 import com.github.mjksabit.warehouse.client.model.Car;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXColorPicker;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
@@ -17,8 +18,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Edit extends Controller{
 
@@ -55,8 +54,23 @@ public class Edit extends Controller{
     @FXML
     private JFXButton save;
 
+    @FXML
+    private JFXCheckBox color_1_check;
+
+    @FXML
+    private JFXCheckBox color_2_check;
+
+    @FXML
+    private JFXCheckBox color_3_check;
+
     private File selectedFile;
 
+
+    public void initialize() {
+        color1.visibleProperty().bind(color_1_check.selectedProperty());
+        color2.visibleProperty().bind(color_2_check.selectedProperty());
+        color3.visibleProperty().bind(color_3_check.selectedProperty());
+    }
 
 
     @FXML
@@ -84,9 +98,15 @@ public class Edit extends Controller{
         price.setText(""+car.getPrice());
 
         JFXColorPicker[] colorPicker = {color1, color2, color3};
+        JFXCheckBox[] checkBoxes = {color_1_check, color_2_check, color_3_check};
 
         for (int i = 0; i < colorPicker.length; i++) {
-            if(!car.getColors()[i].equals("null")) colorPicker[i].setValue(Color.valueOf(car.getColors()[i]));
+            if(!car.getColors()[i].equals("null")) {
+                checkBoxes[i].selectedProperty().setValue(true);
+                colorPicker[i].setValue(Color.valueOf(car.getColors()[i]));
+            } else {
+                checkBoxes[i].selectedProperty().setValue(false);
+            }
         }
 
         image.setImage(new Image(new ByteArrayInputStream(car.getImage())));
@@ -99,9 +119,9 @@ public class Edit extends Controller{
                 model.getText(),
                 Integer.parseInt(yearMade.getText()),
                 Integer.parseInt(price.getText()),
-                color1.valueProperty().get().toString(),
-                color2.valueProperty().get().toString(),
-                color3.valueProperty().get().toString());
+                color1.isVisible() ? color1.valueProperty().get().toString() : null,
+                color2.isVisible() ? color2.valueProperty().get().toString() : null,
+                color3.isVisible() ? color3.valueProperty().get().toString() : null);
 
         if (selectedFile == null)
             selectedFile = new File(FXMain.class.getResource("assets/car.jpeg").getFile());
@@ -111,8 +131,37 @@ public class Edit extends Controller{
         return car;
     }
 
+    private boolean validate() {
+        JFXTextField []fields = {yearMade, price, stock};
+
+        int i=0;
+        try {
+            for (i=0; i<fields.length; i++) {
+                if (Integer.parseInt(fields[i].getText())<0) throw new Exception();
+            }
+        } catch (Exception e) {
+            fields[i].setStyle("-fx-fill: #F00");
+            fields[i].setFocusColor(Color.RED);
+            fields[i].requestFocus();
+            return false;
+        }
+
+        JFXTextField [] texts = {carMake, model, regNo};
+
+        for (var text : texts)
+            if (text.getText().equals("")) {
+                text.setStyle("-fx-fill: #F00");
+                text.setFocusColor(Color.RED);
+                text.requestFocus();
+                return false;
+            }
+
+        return true;
+    }
+
     public void setOnSave(EventHandler<ActionEvent> event) {
         save.setOnAction(actionEvent -> {
+            if (!validate()) return;
             event.handle(actionEvent);
             getStage().close();
         });

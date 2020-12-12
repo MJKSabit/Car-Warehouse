@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXColorPicker?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="382.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.mjksabit.warehouse.client.controller.Edit">
    <children>
@@ -26,17 +30,70 @@
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
+         <font>
+            <Font name="Ubuntu" size="16.0" />
+         </font>
       </JFXButton>
-      <JFXTextField fx:id="carMake" labelFloat="true" layoutX="233.0" layoutY="39.0" promptText="Car Make" />
-      <JFXTextField fx:id="yearMade" labelFloat="true" layoutX="407.0" layoutY="37.0" prefHeight="28.0" prefWidth="168.0" promptText="Year Made" />
-      <JFXTextField fx:id="model" labelFloat="true" layoutX="233.0" layoutY="107.0" prefHeight="39.0" prefWidth="342.0" promptText="Model" />
-      <JFXTextField fx:id="regNo" labelFloat="true" layoutX="233.0" layoutY="180.0" prefHeight="39.0" prefWidth="342.0" promptText="Registration No" />
-      <JFXColorPicker fx:id="color1" layoutX="361.0" layoutY="277.0" prefWidth="69.0" />
-      <JFXColorPicker fx:id="color2" layoutX="501.0" layoutY="277.0" prefWidth="69.0" />
-      <JFXColorPicker fx:id="color3" layoutX="431.0" layoutY="277.0" prefWidth="69.0" />
-      <JFXTextField fx:id="price" labelFloat="true" layoutX="19.0" layoutY="275.0" promptText="Price" />
-      <JFXTextField fx:id="stock" labelFloat="true" layoutX="192.0" layoutY="275.0" promptText="Stock" />
-      <JFXButton fx:id="save" layoutX="457.0" layoutY="337.0" text="Save" />
-      <JFXButton layoutX="518.0" layoutY="337.0" onAction="#cancel" text="Cancel" />
+      <JFXTextField fx:id="carMake" focusColor="#00587a" labelFloat="true" layoutX="233.0" layoutY="39.0" promptText="Car Make" unFocusColor="#008891">
+         <font>
+            <Font name="Ubuntu" size="15.0" />
+         </font></JFXTextField>
+      <JFXTextField fx:id="yearMade" focusColor="#00587a" labelFloat="true" layoutX="407.0" layoutY="38.0" prefHeight="28.0" prefWidth="168.0" promptText="Year Made" unFocusColor="#008891">
+         <font>
+            <Font name="Ubuntu" size="15.0" />
+         </font></JFXTextField>
+      <JFXTextField fx:id="model" focusColor="#00587a" labelFloat="true" layoutX="233.0" layoutY="100.0" prefHeight="29.0" prefWidth="342.0" promptText="Model" unFocusColor="#008891">
+         <font>
+            <Font name="Ubuntu" size="15.0" />
+         </font></JFXTextField>
+      <JFXTextField fx:id="regNo" focusColor="#00587a" labelFloat="true" layoutX="233.0" layoutY="159.0" prefHeight="29.0" prefWidth="342.0" promptText="Registration No" unFocusColor="#008891">
+         <font>
+            <Font name="Ubuntu" size="15.0" />
+         </font></JFXTextField>
+      <JFXTextField fx:id="price" focusColor="#00587a" labelFloat="true" layoutX="246.0" layoutY="225.0" prefHeight="28.0" prefWidth="131.0" promptText="Price" unFocusColor="#008891">
+         <font>
+            <Font name="Ubuntu" size="15.0" />
+         </font></JFXTextField>
+      <JFXTextField fx:id="stock" focusColor="#00587a" labelFloat="true" layoutX="404.0" layoutY="225.0" prefHeight="28.0" prefWidth="170.0" promptText="Stock" unFocusColor="#008891">
+         <font>
+            <Font name="Ubuntu" size="15.0" />
+         </font></JFXTextField>
+      <Group layoutX="25.0" layoutY="290.0">
+         <children>
+            <JFXColorPicker fx:id="color1" layoutX="11.0" layoutY="41.0" prefWidth="69.0" />
+            <JFXCheckBox fx:id="color_1_check" checkedColor="#008891" contentDisplay="TEXT_ONLY" layoutX="10.0" layoutY="10.0" text="Color 1" />
+         </children>
+      </Group>
+      <Label layoutX="231.0" layoutY="226.0" text="\$">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Group layoutX="135.0" layoutY="289.0">
+         <children>
+            <JFXColorPicker fx:id="color2" layoutX="11.0" layoutY="41.0" prefWidth="69.0" />
+            <JFXCheckBox fx:id="color_2_check" checkedColor="#008891" contentDisplay="TEXT_ONLY" layoutX="10.0" layoutY="10.0" text="Color 2" />
+         </children>
+      </Group>
+      <Group layoutX="244.0" layoutY="289.0">
+         <children>
+            <JFXColorPicker fx:id="color3" layoutX="11.0" layoutY="41.0" prefWidth="69.0" />
+            <JFXCheckBox fx:id="color_3_check" checkedColor="#008891" contentDisplay="TEXT_ONLY" layoutX="10.0" layoutY="10.0" text="Color 3" />
+         </children>
+      </Group>
+      <Label layoutX="23.0" layoutY="255.0" text="Colors:">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="19.0" layoutY="216.0" text="1:1" />
+      <JFXButton fx:id="save" buttonType="RAISED" defaultButton="true" layoutX="444.0" layoutY="337.0" style="-fx-background-color: #219653;" text="Save" textFill="WHITE">
+         <font>
+            <Font name="Ubuntu" size="16.0" />
+         </font></JFXButton>
+      <JFXButton buttonType="RAISED" cancelButton="true" layoutX="514.0" layoutY="337.0" onAction="#cancel" style="-fx-background-color: #EB5757;" text="Cancel" textFill="WHITE">
+         <font>
+            <Font name="Ubuntu" size="16.0" />
+         </font></JFXButton>
    </children>
 </AnchorPane>

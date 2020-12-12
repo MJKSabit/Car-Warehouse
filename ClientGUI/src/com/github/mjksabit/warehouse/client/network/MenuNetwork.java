@@ -22,8 +22,8 @@ public class MenuNetwork {
 
     private boolean isViewer = true;
 
-    private Map<Integer, Car> cars = new HashMap<>();
-    private Map<Integer, Card> cardMap = new HashMap<>();
+    private volatile Map<Integer, Car> cars = new HashMap<>();
+    private volatile Map<Integer, Card> cardMap = new HashMap<>();
 
     public MenuNetwork(Menu menuController, ObservableList<Node> cards) {
         this.menuController = menuController;
@@ -97,7 +97,7 @@ public class MenuNetwork {
             card.setOnBuyListener((actionEvent -> buyCar(id)));
             card.setManufacturerListener(actionEvent -> {
                 Edit edit = menuController.getEdit();
-                edit.setCar(car);
+                edit.setCar(cars.get(id));
                 edit.setOnSave(actionEvent1 -> editCar(id, edit.getCar()));
                 edit.show("Edit Car");
             }, actionEvent -> removeCarRequest(id));

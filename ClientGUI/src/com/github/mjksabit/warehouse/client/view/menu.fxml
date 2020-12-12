@@ -23,14 +23,14 @@
                   <Font name="Ubuntu" size="30.0" />
                </font>
             </Label>
-            <JFXButton fx:id="regSearchTab" layoutX="657.0" layoutY="31.0" onAction="#showSearchByReg" style="-fx-background-color: #00587A;" text="Reg #" textFill="WHITE" />
-            <JFXButton fx:id="makeSearchTab" layoutX="726.0" layoutY="31.0" onAction="#showSearchByMake" style="-fx-background-color: #00587A;" text="Make" textFill="WHITE" />
-            <Label layoutX="660.0" layoutY="4.0" prefHeight="21.0" prefWidth="85.0" text="Search by:" textFill="WHITE">
+            <JFXButton fx:id="regSearchTab" layoutX="657.0" layoutY="31.0" onAction="#showSearchByReg" style="-fx-background-color: #00587A;" text="Reg #" textFill="WHITE" AnchorPane.rightAnchor="80.0" />
+            <JFXButton fx:id="makeSearchTab" layoutX="726.0" layoutY="31.0" onAction="#showSearchByMake" style="-fx-background-color: #00587A;" text="Make" textFill="WHITE" AnchorPane.rightAnchor="20.0" />
+            <Label layoutX="660.0" layoutY="4.0" prefHeight="21.0" prefWidth="85.0" text="Search by:" textFill="WHITE" AnchorPane.rightAnchor="55.0">
                <font>
                   <Font name="Ubuntu" size="14.0" />
                </font>
             </Label>
-            <Pane layoutX="596.0" layoutY="8.0" prefHeight="47.0" prefWidth="51.0" AnchorPane.leftAnchor="596.0" AnchorPane.rightAnchor="153.0" AnchorPane.topAnchor="8.0">
+            <Pane layoutX="596.0" layoutY="8.0" prefHeight="47.0" prefWidth="51.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="150.0" AnchorPane.topAnchor="5.0">
                <children>
                   <SVGPath content="M64.5833 58.3333H61.2917L60.125 57.2083C64.2083 52.4583 66.6667 46.2917 66.6667 39.5833C66.6667 24.625 54.5417 12.5 39.5833 12.5C24.625 12.5 12.5 24.625 12.5 39.5833C12.5 54.5417 24.625 66.6667 39.5833 66.6667C46.2917 66.6667 52.4583 64.2083 57.2083 60.125L58.3333 61.2917V64.5833L79.1667 85.375L85.375 79.1667L64.5833 58.3333ZM39.5833 58.3333C29.2083 58.3333 20.8333 49.9583 20.8333 39.5833C20.8333 29.2083 29.2083 20.8333 39.5833 20.8333C49.9583 20.8333 58.3333 29.2083 58.3333 39.5833C58.3333 49.9583 49.9583 58.3333 39.5833 58.3333Z" fill="WHITE" layoutX="-24.0" layoutY="-26.0" scaleX="0.5" scaleY="0.5" />
                </children>
