@@ -4,17 +4,47 @@ import com.github.mjksabit.warehouse.server.Model.Car;
 import com.github.mjksabit.warehouse.server.Model.User;
 import com.github.mjksabit.warehouse.server.Network.Data;
 import org.apache.logging.log4j.CloseableThreadContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.*;
 
 public class DB {
 
+    private static Logger logger = LogManager.getLogger(DB.class);
+
+    public static final String DATABASE_FILE = "database.db";
+
     private Map<String, String> users = new HashMap<>();
     private Map<Integer, Car> cars = new HashMap<>();
 
+    private final Connection dbConnect;
+
+    private Connection makeConnection() {
+        String DATABASE_LOCATION = "jdbc:sqlite:" + new File(DATABASE_FILE).getAbsolutePath();
+        logger.info("Connecting to Database: "+DATABASE_LOCATION);
+        try {
+            Connection connection = DriverManager.getConnection(DATABASE_LOCATION);
+            logger.info("Connected to database");
+            return connection;
+        } catch (SQLException e) {
+            logger.error("Cannot connect to database");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private DB() {
+
+        dbConnect = makeConnection();
+
+
         users.put("sabit", "1234");
 
         var car = new Car("XYZ-123", "Toyota", "Nova", 2020, 10000, "#2A2A2A");
