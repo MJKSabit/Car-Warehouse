@@ -358,4 +358,19 @@ public class DB {
     public boolean adminLogin(String password) {
         return ADMIN_PASSWORD.equals(password);
     }
+
+    public boolean addUser(String username, String password) {
+        String query = "INSERT INTO " + USER_TABLE +
+                " (" + USER_USERNAME + ", " + USER_PASSWORD + ")" +
+                " VALUES (?, ?)";
+
+        try (PreparedStatement statement = dbConnect.prepareStatement(query)){
+            statement.setString(1, username.toLowerCase());
+            statement.setString(2, password);
+            statement.execute();
+            return true;
+        } catch (SQLException throwables) {
+            return false;
+        }
+    }
 }

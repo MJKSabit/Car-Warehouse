@@ -39,6 +39,7 @@ public class Data {
     public static final String ADMIN = "adminLogin";
     public static final String ADD_USER = "addUser";
     public static final String REMOVE_USER = "removeUser";
+    public static final String GET_USERS = "getUsers";
 
     public static final String CAR_ID = "carId";
     public static final String CAR = "car";

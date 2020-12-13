@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class Login extends Controller {
 
-    private final LoginNetwork network = new LoginNetwork(this);
+    private LoginNetwork network;
 
     @FXML
     private JFXButton togglerButton;
@@ -34,6 +34,8 @@ public class Login extends Controller {
     private AnchorPane manuPane;
 
     public void initialize() {
+        network = new LoginNetwork(this);
+
         manuPane.visibleProperty().bind(manuPane.disableProperty().not());
         adminPane.visibleProperty().bind(adminPane.disableProperty().not());
         adminPane.disableProperty().bind(manuPane.disableProperty().not());
@@ -85,6 +87,7 @@ public class Login extends Controller {
         try {
             Admin admin = FXUtil.loadFXML("admin");
             admin.setStage(getStage());
+            admin.setLoginPage(this);
             admin.show("Admin Panel");
         } catch (IOException e) {
             e.printStackTrace();

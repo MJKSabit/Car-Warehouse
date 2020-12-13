@@ -114,7 +114,7 @@ public class Client implements Runnable, Closeable {
                 return buyCar(request);
 
             case Data.ADMIN: return admin(request);
-//            case Data.ADD_USER: return addUser(request);
+            case Data.ADD_USER: return addUser(request);
 //            case Data.REMOVE_USER: return removeUser(request);
 
             case Data.LOGOUT:
@@ -126,6 +126,18 @@ public class Client implements Runnable, Closeable {
                 return new Data(Data.ERROR, object, null);
             }
         }
+    }
+
+    private Data addUser(Data request) throws JSONException {
+        JSONObject object = new JSONObject();
+        String username = request.getText().getString(Data.LOGIN_USERNAME);
+
+        if(DB.getInstance().addUser(username,
+                request.getText().getString(Data.LOGIN_PASSWORD)))
+            return new Data(Data.ADD_USER, object, null);
+
+        object.put(Data.INFO, "Can not add user: " + username);
+        return new Data(Data.ERROR, object, null);
     }
 
     private Data admin(Data request) throws JSONException {
