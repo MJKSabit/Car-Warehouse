@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXSpinner?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Group?>
@@ -14,6 +15,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.ProgressIndicator?>
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.mjksabit.warehouse.client.controller.Menu">
    <top>
       <AnchorPane prefHeight="60.0" prefWidth="800.0" style="-fx-background-color: #008891;">
@@ -96,7 +98,7 @@
                               <Font name="Ubuntu Light" size="18.0" />
                            </font>
                         </JFXTextField>
-                        <JFXButton layoutX="577.0" layoutY="9.0" onAction="#searchByRegNo" prefHeight="32.0" prefWidth="116.0" ripplerFill="WHITE" style="-fx-background-color: #00587A;" text="Search" textFill="WHITE" AnchorPane.rightAnchor="60.0">
+                        <JFXButton layoutX="577.0" layoutY="9.0" onAction="#searchByRegNo" prefHeight="32.0" prefWidth="116.0" ripplerFill="WHITE" style="-fx-background-color: #00587A;" text="Search" textFill="WHITE" AnchorPane.leftAnchor="470.0" AnchorPane.rightAnchor="90.0">
                            <font>
                               <Font name="Ubuntu" size="18.0" />
                            </font>
@@ -106,6 +108,7 @@
                               <SVGPath content="M39.5833 13.3542L36.6458 10.4167L25 22.0625L13.3541 10.4167L10.4166 13.3542L22.0625 25L10.4166 36.6458L13.3541 39.5833L25 27.9375L36.6458 39.5833L39.5833 36.6458L27.9375 25L39.5833 13.354M39.5833 13.3542L36.6458 10.4167L25 22.0625L13.3541 10.4167L10.4166 13.3542L22.0625 25L10.4166 36.6458L13.3541 39.5833L25 27.9375L36.6458 39.5833L39.5833 36.6458L27.9375 25L39.5833 13.3542Z" fill="#eb5757" />
                            </graphic>
                         </JFXButton>
+                        <ProgressIndicator fx:id="regSearchLoading" layoutX="569.0" layoutY="15.0" prefHeight="25.0" prefWidth="25.0" AnchorPane.leftAnchor="571.0" AnchorPane.rightAnchor="53.0" />
                      </children>
                   </AnchorPane>
                   <AnchorPane fx:id="makeSearchContainer" layoutX="10.0" layoutY="10.0" prefHeight="50.0" prefWidth="700.0">
@@ -125,7 +128,7 @@
                               <Font name="Ubuntu Light" size="18.0" />
                            </font>
                         </JFXTextField>
-                        <JFXButton layoutX="577.0" layoutY="9.0" onAction="#searchByMakeModel" prefHeight="32.0" prefWidth="116.0" ripplerFill="WHITE" style="-fx-background-color: #00587A;" text="Search" textFill="WHITE" AnchorPane.rightAnchor="60.0">
+                        <JFXButton layoutX="577.0" layoutY="9.0" onAction="#searchByMakeModel" prefHeight="32.0" prefWidth="116.0" ripplerFill="WHITE" style="-fx-background-color: #00587A;" text="Search" textFill="WHITE" AnchorPane.leftAnchor="470.0" AnchorPane.rightAnchor="90.0">
                            <font>
                               <Font name="Ubuntu" size="18.0" />
                            </font>
@@ -140,6 +143,7 @@
                               <Font name="Ubuntu" size="18.0" />
                            </font>
                         </Label>
+                        <ProgressIndicator fx:id="makeSearchLoading" layoutX="571.0" layoutY="12.0" prefHeight="25.0" prefWidth="25.0" AnchorPane.leftAnchor="571.0" AnchorPane.rightAnchor="53.0" />
                      </children>
                   </AnchorPane>
                   <ScrollPane fitToWidth="true" prefWidth="750.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">

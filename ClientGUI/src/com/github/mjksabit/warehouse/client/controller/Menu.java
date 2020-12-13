@@ -4,12 +4,15 @@ import com.github.mjksabit.warehouse.client.FXUtil;
 import com.github.mjksabit.warehouse.client.model.Car;
 import com.github.mjksabit.warehouse.client.network.MenuNetwork;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTextField;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 
@@ -50,6 +53,12 @@ public class Menu extends Controller {
     @FXML
     private FlowPane carListFlowPane;
 
+    @FXML
+    private ProgressIndicator regSearchLoading;
+
+    @FXML
+    private ProgressIndicator makeSearchLoading;
+
     MenuNetwork network;
     ObservableList<Node> cards;
 
@@ -64,7 +73,8 @@ public class Menu extends Controller {
         cards = carListFlowPane.getChildren();
         network = new MenuNetwork(this, cards);
 
-
+        makeSearchLoading.setVisible(false);
+        regSearchLoading.setVisible(false);
     }
 
     public void asViewer() {
@@ -120,16 +130,20 @@ public class Menu extends Controller {
     private void hideSearchBar() {
         makeSearchContainer.setVisible(false);
         regSearchContainer.setVisible(false);
+        makeSearchTab.setStyle("-fx-background-color:  #008891;");
+        regSearchTab.setStyle("-fx-background-color:  #008891;");
     }
 
     @FXML
     void showSearchByMake(ActionEvent event) {
         hideSearchBar();
         makeSearchContainer.setVisible(true);
+        makeSearchTab.setStyle("-fx-background-color: #00587A");
     }
 
     @FXML
     void searchByMakeModel(ActionEvent event) {
+        makeSearchLoading.setVisible(true);
         network.setCardFilter(card -> {
             Car car = card.getCar();
             String make = carMake.getText().toLowerCase();
@@ -138,20 +152,24 @@ public class Menu extends Controller {
             return car.getMake().toLowerCase().contains(make) &&
                     car.getModel().toLowerCase().contains(model);
         });
+        makeSearchLoading.setVisible(false);
     }
 
     @FXML
     void searchByRegNo(ActionEvent event) {
+        regSearchLoading.setVisible(true);
         network.setCardFilter(card -> {
             Car car = card.getCar();
             String regNo = registrationNo.getText().toLowerCase();
             return car.getRegistrationNumber().toLowerCase().contains(regNo);
         });
+        regSearchLoading.setVisible(false);
     }
 
     @FXML
     void showSearchByReg(ActionEvent event) {
         hideSearchBar();
         regSearchContainer.setVisible(true);
+        regSearchTab.setStyle("-fx-background-color: #00587A");
     }
 }
