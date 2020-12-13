@@ -158,14 +158,54 @@ public class DB {
 
     public ArrayList<Data> allCars() throws JSONException {
         ArrayList<Data> carData = new ArrayList<>();
-        for ( var key : cars.keySet()) {
-            carData.add(cars.get(key).toData(key));
+
+        String query = "SELECT "+CAR_ID+" FROM "+CAR_TABLE;
+
+        try (PreparedStatement statement = dbConnect.prepareStatement(query)){
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()){
+                int id = resultSet.getInt(1);
+                carData.add(getCar(id).toData(id));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
+
         return carData;
     }
 
     public Car getCar(int id) {
-        return cars.getOrDefault(id, null);
+        Car car = null;
+
+        String query = "SELECT * FROM " + CAR_TABLE +
+                " WHERE " + CAR_ID + "=?";
+
+        try(PreparedStatement statement = dbConnect.prepareStatement(query)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            resultSet.next();
+
+            car = new Car(
+                    resultSet.getString(CAR_REG_NO),
+                    resultSet.getString(CAR_MAKE),
+                    resultSet.getString(CAR_MODEL),
+                    resultSet.getInt(CAR_YEAR),
+                    resultSet.getInt(CAR_PRICE),
+                    resultSet.getString(CAR_COLOR_1),
+                    resultSet.getString(CAR_COLOR_2),
+                    resultSet.getString(CAR_COLOR_3)
+            );
+            car.setLeft(resultSet.getInt(CAR_AVAILABLE));
+            car.setImage(IMAGE_PATH+File.separator+resultSet.getString(CAR_IMAGE));
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return car;
     }
 
     public boolean removeCar(int id) {
@@ -180,9 +220,7 @@ public class DB {
 
         String uuid = UuidUtil.getTimeBasedUuid().toString();
         try {
-//            File image = new File(IMAGE_PATH+File.pathSeparator+uuid);
-//            image.createNewFile();
-            FileOutputStream fos = new FileOutputStream(IMAGE_PATH+File.separator+uuid, true);
+            FileOutputStream fos = new FileOutputStream(IMAGE_PATH+File.separator+uuid, false);
             fos.write(car.getImage());
         } catch (IOException e) {
             e.printStackTrace();
@@ -238,13 +276,59 @@ public class DB {
         String type;
         JSONObject jsonObject = new JSONObject();
 
-        if (cars.containsKey(id)) {
-            Car car = Car.fromData(request);
-            cars.put(id, car);
-            type = Data.EDIT_CAR;
-        } else {
+        Car car = Car.fromData(request);
+
+        String query = "SELECT " + CAR_IMAGE +
+                " FROM " + CAR_TABLE +
+                " WHERE " + CAR_ID + "=?";
+
+        String update = "UPDATE " +
+                CAR_TABLE +
+                " SET " +
+                    CAR_REG_NO + "=? , " +
+                    CAR_MAKE + "=? , " +
+                    CAR_MODEL + "=? , " +
+                    CAR_YEAR + "=? , " +
+                    CAR_PRICE + "=? , " +
+                    CAR_AVAILABLE + "=? , " +
+                    CAR_COLOR_1 + "=? , " +
+                    CAR_COLOR_2 + "=? , " +
+                    CAR_COLOR_3 + "=? " +
+                " WHERE " + CAR_ID + "=?";
+
+        try(PreparedStatement image = dbConnect.prepareStatement(query);
+            PreparedStatement statement = dbConnect.prepareStatement(update)) {
+
+            image.setInt(1, id);
+            ResultSet set = image.executeQuery();
+
+            set.next();
+            String imageName = set.getString(CAR_IMAGE);
+
+            statement.setString(1, car.getRegistrationNumber());
+            statement.setString(2, car.getMake());
+            statement.setString(3, car.getModel());
+            statement.setInt(4, car.getYearMade());
+            statement.setInt(5, car.getPrice());
+            statement.setInt(6, car.getLeft());
+            statement.setString(7, car.getColors()[0]);
+            statement.setString(8, car.getColors()[1]);
+            statement.setString(9, car.getColors()[2]);
+            statement.setInt(10, id);
+
+            int updated = statement.executeUpdate();
+            if (updated != 1)
+                new SQLException("What the hack! updated more than once?");
+
+            FileOutputStream fos = new FileOutputStream(IMAGE_PATH+File.separator+imageName, false);
+            fos.write(car.getImage());
+
+            type = Data.UPDATE_CAR;
+            jsonObject.put(Data.INFO, "Car Edit successful");
+        } catch (SQLException | IOException throwables) {
+            throwables.printStackTrace();
             type = Data.ERROR;
-            jsonObject.put(Data.INFO, "No car found in database");
+            jsonObject.put(Data.INFO, "Can not edit the car!");
         }
 
         return new Data(type, jsonObject, null);
