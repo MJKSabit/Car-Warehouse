@@ -43,6 +43,7 @@ public class Data {
 
     public static final String CAR_ID = "carId";
     public static final String CAR = "car";
+    public static final String USER = "user";
 
     public Data(String TYPE, JSONObject text, byte[] binary) {
         this.TYPE = TYPE;

@@ -4,6 +4,7 @@ import com.github.mjksabit.warehouse.server.Model.Car;
 import com.github.mjksabit.warehouse.server.data.DB;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -115,6 +116,7 @@ public class Client implements Runnable, Closeable {
 
             case Data.ADMIN: return admin(request);
             case Data.ADD_USER: return addUser(request);
+            case Data.GET_USERS: return getUsers(request);
 //            case Data.REMOVE_USER: return removeUser(request);
 
             case Data.LOGOUT:
@@ -128,11 +130,27 @@ public class Client implements Runnable, Closeable {
         }
     }
 
+    private Data getUsers(Data request) throws JSONException {
+        JSONObject object = new JSONObject();
+        String type = null;
+
+        if (!isAdmin) {
+            type = Data.ERROR;
+            object.put(Data.INFO, "You are not authorized!");
+        } else {
+            type = Data.GET_USERS;
+            ArrayList<String> users = DB.getInstance().getUsers();
+            object.put(Data.USER, new JSONArray(users));
+        }
+
+        return new Data(type, object, null);
+    }
+
     private Data addUser(Data request) throws JSONException {
         JSONObject object = new JSONObject();
         String username = request.getText().getString(Data.LOGIN_USERNAME);
 
-        if(DB.getInstance().addUser(username,
+        if(isAdmin && DB.getInstance().addUser(username,
                 request.getText().getString(Data.LOGIN_PASSWORD)))
             return new Data(Data.ADD_USER, object, null);
 

@@ -373,4 +373,21 @@ public class DB {
             return false;
         }
     }
+
+    public ArrayList<String> getUsers() {
+        ArrayList<String> users = new ArrayList<>();
+
+        String query = "SELECT " + USER_USERNAME + " FROM " + USER_TABLE;
+        try (PreparedStatement statement = dbConnect.prepareStatement(query)){
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()){
+                users.add(resultSet.getString(USER_USERNAME));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return users;
+    }
 }

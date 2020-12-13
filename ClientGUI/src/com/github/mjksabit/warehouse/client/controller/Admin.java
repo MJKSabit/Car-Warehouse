@@ -41,6 +41,7 @@ public class Admin extends Controller{
         );
 
         network = new AdminNetwork(this);
+        refresh(null);
     }
 
     public void setLoginPage(Login loginPage) {

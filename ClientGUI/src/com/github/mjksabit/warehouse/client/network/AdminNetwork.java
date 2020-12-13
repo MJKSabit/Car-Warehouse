@@ -5,6 +5,7 @@ import com.github.mjksabit.warehouse.client.controller.Admin;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.Pane;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,6 +39,15 @@ public class AdminNetwork {
     }
 
     public void getAllUser(ObservableList<String> items) {
-        Data requset = new Data(Data.GET_USERS, new JSONObject(), null);
+        Data request = new Data(Data.GET_USERS, new JSONObject(), null);
+        ServerConnect.getInstance().sendRequest(request, response -> {
+            Platform.runLater(items::clear);
+
+            JSONArray users = response.getText().optJSONArray(Data.USER);
+            for (int i=0; users!=null && i<users.length(); i++) {
+                var user = users.optString(i);
+                Platform.runLater(() -> items.add(user));
+            }
+        });
     }
 }
