@@ -1,7 +1,6 @@
 package com.github.mjksabit.warehouse.server.Network;
 
 import com.github.mjksabit.warehouse.server.Model.Car;
-import com.github.mjksabit.warehouse.server.Model.User;
 import com.github.mjksabit.warehouse.server.data.DB;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,11 +13,11 @@ import java.util.ArrayList;
 
 public class Client implements Runnable, Closeable {
 
-    private static ArrayList<Client> clients = new ArrayList<>();
+    private static final ArrayList<Client> clients = new ArrayList<>();
 
-    private static Logger logger = LogManager.getLogger(Client.class);
+    private static final Logger logger = LogManager.getLogger(Client.class);
 
-    private Socket socket;
+    private final Socket socket;
 
     private InputStream inputStream = null;
     private OutputStream outputStream = null;
@@ -27,8 +26,8 @@ public class Client implements Runnable, Closeable {
 
     private ResponseSender sender;
 
-    private boolean isManufacturer  = false;
-    private boolean isAdmin         = false;
+    private boolean isManufacturer = false;
+    private boolean isAdmin = false;
 
     private String name = null;
 
@@ -44,30 +43,6 @@ public class Client implements Runnable, Closeable {
         clients.add(this);
 
         new Thread(this).start();
-    }
-
-    @Override
-    public void run() {
-        sender = new ResponseSender(this, out);
-
-        logger.info("Client Connected");
-
-        try {
-            while (true) {
-                logger.info("Waiting For Request");
-                var request = new Data(in);
-                logger.info("REQUEST: " + request.getTYPE());
-
-                var response = route(request);
-                response.getText().put(Data.REQUEST_KEY, request.getTYPE());
-                response.getText().put(Data.REMOVE_REQUESTER, true);
-
-                sender.addToQueue(response);
-            }
-        } catch (JSONException | IOException e) {
-            logger.error(e.getMessage());
-        }
-
     }
 
     private static Data carUpdate(int id) throws JSONException {
@@ -94,22 +69,53 @@ public class Client implements Runnable, Closeable {
         }
     }
 
+    @Override
+    public void run() {
+        sender = new ResponseSender(this, out);
+
+        logger.info("Client Connected");
+
+        try {
+            while (true) {
+                logger.info("Waiting For Request");
+                var request = new Data(in);
+                logger.info("REQUEST: " + request.getTYPE());
+
+                var response = route(request);
+                response.getText().put(Data.REQUEST_KEY, request.getTYPE());
+                response.getText().put(Data.REMOVE_REQUESTER, true);
+
+                sender.addToQueue(response);
+            }
+        } catch (JSONException | IOException e) {
+            logger.error(e.getMessage());
+        }
+
+    }
+
     private Data route(Data request) throws JSONException {
         switch (request.getTYPE()) {
-            case Data.LOGIN: return login(request);
+            case Data.LOGIN:
+                return login(request);
 
-            case Data.REMOVE_CAR: return removeCar(request);
-            case Data.ADD_CAR: return addCar(request);
-            case Data.EDIT_CAR: return editCar(request);
-//
-            case Data.VIEW_ALL: return viewCar(request);
-            case Data.BUY_CAR: return buyCar(request);
+            case Data.REMOVE_CAR:
+                return removeCar(request);
+            case Data.ADD_CAR:
+                return addCar(request);
+            case Data.EDIT_CAR:
+                return editCar(request);
+
+            case Data.VIEW_ALL:
+                return viewCar(request);
+            case Data.BUY_CAR:
+                return buyCar(request);
 //
 //            case Data.ADMIN: return admin(request);
 //            case Data.ADD_USER: return addUser(request);
 //            case Data.REMOVE_USER: return removeUser(request);
 //
-            case Data.LOGOUT: return logout(request);
+            case Data.LOGOUT:
+                return logout(request);
 
             default: {
                 JSONObject object = new JSONObject();
@@ -128,7 +134,7 @@ public class Client implements Runnable, Closeable {
 
         Data data = DB.getInstance().editCar(request);
 
-        if (!data.getTYPE().equals(Data.ERROR)){
+        if (!data.getTYPE().equals(Data.ERROR)) {
             notifyAllCar(request.getText().optInt(Data.CAR_ID));
         }
 
@@ -177,7 +183,7 @@ public class Client implements Runnable, Closeable {
             return new Data(Data.ERROR, object, null);
         }
 
-        if (!data.getTYPE().equals(Data.ERROR)){
+        if (!data.getTYPE().equals(Data.ERROR)) {
             notifyAllCar(request.getText().optInt(Data.CAR_ID));
         }
 
@@ -185,10 +191,10 @@ public class Client implements Runnable, Closeable {
     }
 
     private Data viewCar(Data request) {
-        new Thread( () -> {
+        new Thread(() -> {
             try {
                 var cars = DB.getInstance().allCars();
-                for (var car: cars)
+                for (var car : cars)
                     sender.addToQueue(car);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -200,17 +206,17 @@ public class Client implements Runnable, Closeable {
 
     private Data login(Data request) throws JSONException {
         JSONObject jsonObject = request.getText();
-        Data response =  DB.getInstance().login(
+        Data response = DB.getInstance().login(
                 jsonObject.optString(Data.LOGIN_USERNAME),
                 jsonObject.optString(Data.LOGIN_PASSWORD));
 
         response.getText().put(Data.REQUEST_KEY, request.getTYPE());
 
-        if (response.getTYPE().equals(Data.LOGIN)){
+        if (response.getTYPE().equals(Data.LOGIN)) {
             this.name = jsonObject.optString(Data.LOGIN_USERNAME);
             this.isManufacturer = true;
             Thread.currentThread().setName(name);
-            sender.renameThread(name+"-Request");
+            sender.renameThread(name + "-Request");
 
             logger.info("Logged in <" + name + ">");
         }

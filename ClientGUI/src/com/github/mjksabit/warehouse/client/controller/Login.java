@@ -12,12 +12,7 @@ import java.io.IOException;
 
 public class Login extends Controller {
 
-    private LoginNetwork network = new LoginNetwork(this);
-
-    public void initialize() {
-        manuUsername.setText("sabit");
-    }
-
+    private final LoginNetwork network = new LoginNetwork(this);
 
     @FXML
     private JFXButton togglerButton;
@@ -27,6 +22,10 @@ public class Login extends Controller {
 
     @FXML
     private JFXPasswordField manuPassword;
+
+    public void initialize() {
+        manuUsername.setText("sabit");
+    }
 
     @FXML
     void manufacturerLogin(ActionEvent event) {

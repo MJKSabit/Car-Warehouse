@@ -3,7 +3,6 @@ package com.github.mjksabit.warehouse.client.network;
 import com.github.mjksabit.warehouse.client.FXUtil;
 import com.github.mjksabit.warehouse.client.controller.Login;
 import javafx.application.Platform;
-import javafx.scene.control.Dialog;
 import javafx.scene.layout.Pane;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,7 +18,7 @@ public class LoginNetwork {
 
         ResponseListener responseListener = ServerConnect.getInstance().getResponseListener();
         responseListener.setErrorHandler(response -> FXUtil.showError(
-                (Pane)loginController.getStage().getScene().getRoot(),
+                (Pane) loginController.getStage().getScene().getRoot(),
                 response.getText().optString(Data.INFO, "Information not provided"),
                 2000));
     }
@@ -35,7 +34,12 @@ public class LoginNetwork {
         var request = new Data(Data.LOGIN, object, null);
 
         ServerConnect.getInstance().sendRequest(request, response -> {
-            Platform.runLater(() -> {try { loginController.showHome();} catch (IOException e) {}});
+            Platform.runLater(() -> {
+                try {
+                    loginController.showHome();
+                } catch (IOException ignored) {
+                }
+            });
         });
     }
 

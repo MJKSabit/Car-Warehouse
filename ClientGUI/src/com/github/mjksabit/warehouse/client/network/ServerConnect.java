@@ -1,7 +1,5 @@
 package com.github.mjksabit.warehouse.client.network;
 
-import org.json.JSONObject;
-
 import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
@@ -67,10 +65,6 @@ public class ServerConnect implements Closeable {
         return responseListener;
     }
 
-    /**
-     * Send Request to Server
-     *     Request JSONObject, Must have a REQUEST_TYPE
-     */
     public void sendRequest(Data request, ResponseHandler handler) {
         try {
             request.write(out);

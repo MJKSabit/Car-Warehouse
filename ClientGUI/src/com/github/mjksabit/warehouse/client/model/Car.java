@@ -10,14 +10,23 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Car {
-    private String    registrationNumber;
-    private int       yearMade;
-    private final String[]  colors = new String[3];
-    private String    make;
-    private String    model;
-    private int       price;
-    private byte[]    image;
-    private int       left;
+    public static final String CAR = "car";
+    public static final String ID = Data.CAR_ID;
+    private static final String REG_NO = "regNo";
+    private static final String YEAR = "year";
+    private static final String COLORS = "colors";
+    private static final String MAKE = "make";
+    private static final String MODEL = "model";
+    private static final String PRICE = "price";
+    private static final String LEFT = "left";
+    private final String[] colors = new String[3];
+    private String registrationNumber;
+    private int yearMade;
+    private String make;
+    private String model;
+    private int price;
+    private byte[] image;
+    private int left;
 
     public Car(String registrationNumber, String make, String model, int yearMade, int price, String... colors) {
         this.registrationNumber = registrationNumber;
@@ -25,9 +34,30 @@ public class Car {
         this.make = make;
         this.model = model;
         this.price = price;
-        for (int i = 0; i < 3 && i<colors.length; i++) {
+        for (int i = 0; i < 3 && i < colors.length; i++) {
             this.colors[i] = colors[i];
         }
+    }
+
+    public static Car fromData(Data data) {
+        JSONObject object = data.getText().optJSONObject(CAR);
+
+        Car car = new Car(
+                object.optString(REG_NO),
+                object.optString(MAKE),
+                object.optString(MODEL),
+                object.optInt(YEAR),
+                object.optInt(PRICE),
+                object.optJSONArray(COLORS).optString(0),
+                object.optJSONArray(COLORS).optString(1),
+                object.optJSONArray(COLORS).optString(2)
+        );
+
+        car.left = object.optInt(LEFT, 0);
+
+        car.setImage(data.getBinary());
+
+        return car;
     }
 
     public String getRegistrationNumber() {
@@ -48,6 +78,12 @@ public class Car {
 
     public String[] getColors() {
         return colors;
+    }
+
+    public void setColors(String... colors) {
+        for (int i = 0; i < 3; i++) {
+            this.colors[i] = i < colors.length ? colors[i] : null;
+        }
     }
 
     public String getMake() {
@@ -74,10 +110,8 @@ public class Car {
         this.price = price;
     }
 
-    public void setColors(String... colors) {
-        for (int i = 0; i < 3; i++) {
-            this.colors[i] = i<colors.length ? colors[i] : null;
-        }
+    public byte[] getImage() {
+        return image;
     }
 
     public void setImage(byte[] image) {
@@ -93,10 +127,6 @@ public class Car {
         }
     }
 
-    public byte[] getImage() {
-        return image;
-    }
-
     public int getLeft() {
         return left;
     }
@@ -104,17 +134,6 @@ public class Car {
     public void setLeft(int left) {
         this.left = left;
     }
-
-    private static final String    REG_NO = "regNo";
-    private static final String    YEAR = "year";
-    private static final String    COLORS = "colors";
-    private static final String    MAKE = "make";
-    private static final String    MODEL = "model";
-    private static final String    PRICE = "price";
-    private static final String    LEFT = "left";
-
-    public static final String     CAR = "car";
-    public static final String     ID = Data.CAR_ID;
 
     public Data toData(int id) throws JSONException {
         JSONObject object = new JSONObject();
@@ -138,26 +157,5 @@ public class Car {
         root.put(ID, id);
 
         return new Data(Data.UPDATE_CAR, root, image);
-    }
-
-    public static Car fromData(Data data) {
-        JSONObject object = data.getText().optJSONObject(CAR);
-
-        Car car = new Car(
-                object.optString(REG_NO),
-                object.optString(MAKE),
-                object.optString(MODEL),
-                object.optInt(YEAR),
-                object.optInt(PRICE),
-                object.optJSONArray(COLORS).optString(0),
-                object.optJSONArray(COLORS).optString(1),
-                object.optJSONArray(COLORS).optString(2)
-        );
-
-        car.left = object.optInt(LEFT, 0);
-
-        car.setImage(data.getBinary());
-
-        return car;
     }
 }

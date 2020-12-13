@@ -1,8 +1,5 @@
 package com.github.mjksabit.warehouse.client.network;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;

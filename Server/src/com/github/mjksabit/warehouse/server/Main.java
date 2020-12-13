@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 public class Main {
 
