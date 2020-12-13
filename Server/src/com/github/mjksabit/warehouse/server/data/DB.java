@@ -341,6 +341,20 @@ public class DB {
         return new Data(type, jsonObject, null);
     }
 
+    public boolean isManufacturer(String username) {
+        String query = "SELECT "+USER_USERNAME+" FROM "+USER_TABLE+" WHERE "+USER_USERNAME+"=?";
+
+        try(PreparedStatement statement = dbConnect.prepareStatement(query)) {
+            statement.setString(1, username);
+            ResultSet set = statement.executeQuery();
+
+            return set.next();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean adminLogin(String password) {
         return ADMIN_PASSWORD.equals(password);
     }

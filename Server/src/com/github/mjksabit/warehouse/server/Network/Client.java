@@ -132,7 +132,7 @@ public class Client implements Runnable, Closeable {
         isAdmin = DB.getInstance().adminLogin(request.getText().optString(Data.LOGIN_PASSWORD));
         if(isAdmin) {
             logger.info("ADMIN logged in");
-
+            username = "admin";
             Thread.currentThread().setName("ADMIN");
             sender.renameThread("ADMIN-Request");
 
@@ -147,7 +147,7 @@ public class Client implements Runnable, Closeable {
     }
 
     private Data editCar(Data request) throws JSONException {
-        if (!isManufacturer) {
+        if (!isManufacturer || !DB.getInstance().isManufacturer(username)) {
             JSONObject object = new JSONObject();
             object.putOpt(Data.INFO, "Viewer can't edit a car!");
             return new Data(Data.ERROR, object, null);
@@ -163,7 +163,7 @@ public class Client implements Runnable, Closeable {
     }
 
     private Data addCar(Data request) throws JSONException {
-        if (!isManufacturer) {
+        if (!isManufacturer || !DB.getInstance().isManufacturer(username)) {
             JSONObject object = new JSONObject();
             object.putOpt(Data.INFO, "Viewer can't add a car!");
             return new Data(Data.ERROR, object, null);
@@ -175,7 +175,7 @@ public class Client implements Runnable, Closeable {
     }
 
     private Data removeCar(Data request) throws JSONException {
-        if (!isManufacturer) {
+        if (!isManufacturer || !DB.getInstance().isManufacturer(username)) {
             JSONObject object = new JSONObject();
             object.putOpt(Data.INFO, "Viewer can't remove a car!");
             return new Data(Data.ERROR, object, null);
