@@ -29,7 +29,7 @@ public class Client implements Runnable, Closeable {
     private boolean isManufacturer = false;
     private boolean isAdmin = false;
 
-    private String name = null;
+    private String username = null;
 
     public Client(Socket socket) throws IOException {
         this.socket = socket;
@@ -73,6 +73,9 @@ public class Client implements Runnable, Closeable {
     public void run() {
         sender = new ResponseSender(this, out);
 
+        Thread.currentThread().setName("Unknown");
+        sender.renameThread("Unknown-Request");
+
         logger.info("Client Connected");
 
         try {
@@ -109,11 +112,11 @@ public class Client implements Runnable, Closeable {
                 return viewCar(request);
             case Data.BUY_CAR:
                 return buyCar(request);
-//
-//            case Data.ADMIN: return admin(request);
+
+            case Data.ADMIN: return admin(request);
 //            case Data.ADD_USER: return addUser(request);
 //            case Data.REMOVE_USER: return removeUser(request);
-//
+
             case Data.LOGOUT:
                 return logout(request);
 
@@ -123,6 +126,24 @@ public class Client implements Runnable, Closeable {
                 return new Data(Data.ERROR, object, null);
             }
         }
+    }
+
+    private Data admin(Data request) throws JSONException {
+        isAdmin = DB.getInstance().adminLogin(request.getText().optString(Data.LOGIN_PASSWORD));
+        if(isAdmin) {
+            logger.info("ADMIN logged in");
+
+            Thread.currentThread().setName("ADMIN");
+            sender.renameThread("ADMIN-Request");
+
+            return new Data(Data.ADMIN, new JSONObject(), null);
+        }
+
+        logger.info("ADMIN login error");
+
+        JSONObject object = new JSONObject();
+        object.put(Data.INFO, "Password mismatch!");
+        return new Data(Data.ERROR, object, null);
     }
 
     private Data editCar(Data request) throws JSONException {
@@ -213,21 +234,25 @@ public class Client implements Runnable, Closeable {
         response.getText().put(Data.REQUEST_KEY, request.getTYPE());
 
         if (response.getTYPE().equals(Data.LOGIN)) {
-            this.name = jsonObject.optString(Data.LOGIN_USERNAME);
+            this.username = jsonObject.optString(Data.LOGIN_USERNAME);
             this.isManufacturer = true;
-            Thread.currentThread().setName(name);
-            sender.renameThread(name + "-Request");
+            Thread.currentThread().setName(username);
+            sender.renameThread(username + "-Request");
 
-            logger.info("Logged in <" + name + ">");
+            logger.info("Logged in <" + username + ">");
         }
 
         return response;
     }
 
     private Data logout(Data request) {
-        logger.info("Logged out <" + name + ">");
+        logger.info("Logged out <" + username + ">");
+
+        Thread.currentThread().setName("Unknown");
+        sender.renameThread("Unknown-Request");
+
         isAdmin = isManufacturer = false;
-        name = null;
+        username = null;
 
         return new Data(Data.LOGOUT, new JSONObject(), null);
     }

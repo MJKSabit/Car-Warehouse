@@ -33,14 +33,20 @@ public class LoginNetwork {
         }
         var request = new Data(Data.LOGIN, object, null);
 
-        ServerConnect.getInstance().sendRequest(request, response -> {
-            Platform.runLater(() -> {
-                try {
-                    loginController.showHome();
-                } catch (IOException ignored) {
-                }
-            });
-        });
+        ServerConnect.getInstance().sendRequest(request, response -> Platform.runLater(loginController::showHome));
+    }
+
+    public void loginAsAdmin(String password) {
+        var object = new JSONObject();
+        try {
+            object.put(Data.LOGIN_USERNAME, "admin");
+            object.put(Data.LOGIN_PASSWORD, password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        var request = new Data(Data.ADMIN, object, null);
+
+        ServerConnect.getInstance().sendRequest(request, response -> Platform.runLater(loginController::showAdmin));
     }
 
 }

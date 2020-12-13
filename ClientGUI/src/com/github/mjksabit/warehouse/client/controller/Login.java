@@ -7,6 +7,7 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 
@@ -23,8 +24,24 @@ public class Login extends Controller {
     @FXML
     private JFXPasswordField manuPassword;
 
+    @FXML
+    private JFXPasswordField adminPassword;
+
+    @FXML
+    private AnchorPane adminPane;
+
+    @FXML
+    private AnchorPane manuPane;
+
     public void initialize() {
+        manuPane.visibleProperty().bind(manuPane.disableProperty().not());
+        adminPane.visibleProperty().bind(adminPane.disableProperty().not());
+        adminPane.disableProperty().bind(manuPane.disableProperty().not());
+
+        manuPane.setDisable(false);
+
         manuUsername.setText("sabit");
+        manuPassword.setText("1234");
     }
 
     @FXML
@@ -34,7 +51,7 @@ public class Login extends Controller {
 
     @FXML
     void toggleMode(ActionEvent event) {
-
+        manuPane.setDisable(!manuPane.isDisabled());
     }
 
     @FXML
@@ -46,11 +63,31 @@ public class Login extends Controller {
         menu.show("MJK Warehouse - Buy Car");
     }
 
-    public void showHome() throws IOException {
-        Menu menu = FXUtil.loadFXML("menu");
-        menu.init(manuUsername.getText());
-        menu.asManufacturer();
-        menu.setStage(getStage());
-        menu.show("MJK Warehouse - " + manuUsername.getText());
+    @FXML
+    void adminLogin(ActionEvent event) {
+        network.loginAsAdmin(adminPassword.getText());
+    }
+
+    public void showHome() {
+        try {
+            Menu menu = FXUtil.loadFXML("menu");
+            menu.init(manuUsername.getText());
+            menu.asManufacturer();
+            menu.setStage(getStage());
+            menu.show("MJK Warehouse - " + manuUsername.getText());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void showAdmin() {
+        try {
+            Admin admin = FXUtil.loadFXML("admin");
+            admin.setStage(getStage());
+            admin.show("Admin Panel");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

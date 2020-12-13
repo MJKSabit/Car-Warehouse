@@ -18,8 +18,8 @@ public class DB {
 
     public static final String DATABASE_FILE = "database.db";
     public static final String IMAGE_PATH = "images";
-    public static final String USER_TABLE = "users";
 
+    public static final String ADMIN_PASSWORD = "password";
     /*
     CREATE TABLE "users" (
 	    "username"	TEXT NOT NULL,
@@ -29,8 +29,9 @@ public class DB {
      */
     public static final String USER_USERNAME = "username";
     public static final String USER_PASSWORD = "password";
-    public static final String CAR_TABLE = "cars";
 
+    public static final String CAR_TABLE = "cars";
+    public static final String USER_TABLE = "users";
     /*
     CREATE TABLE "cars" (
 	    "carid"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -338,5 +339,9 @@ public class DB {
         }
 
         return new Data(type, jsonObject, null);
+    }
+
+    public boolean adminLogin(String password) {
+        return ADMIN_PASSWORD.equals(password);
     }
 }

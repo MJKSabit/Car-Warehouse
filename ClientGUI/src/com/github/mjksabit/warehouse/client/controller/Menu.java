@@ -4,7 +4,6 @@ import com.github.mjksabit.warehouse.client.FXUtil;
 import com.github.mjksabit.warehouse.client.model.Car;
 import com.github.mjksabit.warehouse.client.network.MenuNetwork;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTextField;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 
