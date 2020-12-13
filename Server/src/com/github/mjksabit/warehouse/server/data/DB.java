@@ -145,12 +145,24 @@ public class DB {
         String type;
         JSONObject jsonObject = new JSONObject();
 
-        if (!cars.containsKey(id) || cars.get(id).getLeft()<=0) {
+        String update = "UPDATE " + CAR_TABLE +
+                " SET "+
+                    CAR_AVAILABLE + " = " + CAR_AVAILABLE + " - 1" +
+                " WHERE "+
+                    CAR_AVAILABLE + ">0 AND " + CAR_ID + "=?";
+
+        try (PreparedStatement statement = dbConnect.prepareStatement(update)){
+            statement.setInt(1, id);
+
+            int execute = statement.executeUpdate();
+
+            if (execute != 1) throw new SQLException();
+            type = Data.BUY_CAR;
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
             type = Data.ERROR;
             jsonObject.put(Data.INFO, "Car not available");
-        } else {
-            type = Data.BUY_CAR;
-            cars.get(id).setLeft(cars.get(id).getLeft()-1);
         }
 
         return new Data(type, jsonObject, null);
