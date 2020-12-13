@@ -202,18 +202,36 @@ public class DB {
             car.setImage(IMAGE_PATH+File.separator+resultSet.getString(CAR_IMAGE));
 
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            logger.info("No car with id = "+id);
         }
 
         return car;
     }
 
     public boolean removeCar(int id) {
-        if (cars.containsKey(id)) {
-            cars.remove(id);
-            return true;
+        String query = "SELECT " + CAR_IMAGE +
+                " FROM " + CAR_TABLE +
+                " WHERE " + CAR_ID + "=?";
+        String delete = "DELETE FROM "+CAR_TABLE+" WHERE "+CAR_ID+"=?";
+
+        try (PreparedStatement image = dbConnect.prepareStatement(query);
+             PreparedStatement statement = dbConnect.prepareStatement(delete)){
+            image.setInt(1, id);
+
+            ResultSet set = image.executeQuery();
+
+            set.next();
+            String imageName = set.getString(CAR_IMAGE);
+            new File(IMAGE_PATH+File.separator+imageName).delete();
+
+            statement.setInt(1, id);
+            int count = statement.executeUpdate();
+
+            return count==1;
+        } catch (SQLException throwables) {
+            logger.error("No car with id "+id+" to delete");
+            return false;
         }
-        return false;
     }
 
     public int addCar(Car car) {
