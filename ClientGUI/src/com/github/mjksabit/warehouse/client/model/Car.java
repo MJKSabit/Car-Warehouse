@@ -9,24 +9,26 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class Car {
-    public static final String CAR = "car";
-    public static final String ID = Data.CAR_ID;
-    private static final String REG_NO = "regNo";
-    private static final String YEAR = "year";
-    private static final String COLORS = "colors";
-    private static final String MAKE = "make";
-    private static final String MODEL = "model";
-    private static final String PRICE = "price";
-    private static final String LEFT = "left";
-    private final String[] colors = new String[3];
-    private String registrationNumber;
-    private int yearMade;
-    private String make;
-    private String model;
-    private int price;
-    private byte[] image;
-    private int left;
+/**
+ * Car class represents a car in this project having the attributes needed.
+ */
+public final class Car {
+    private String          registrationNumber;
+    private int             yearMade;
+    private final String[]  colors = new String[3];
+    private String          make;
+    private String          model;
+    private int             price;
+    private byte[]          image;
+    private int             left;
+
+    public int getLeft() {
+        return left;
+    }
+
+    public void setLeft(int left) {
+        this.left = left;
+    }
 
     public Car(String registrationNumber, String make, String model, int yearMade, int price, String... colors) {
         this.registrationNumber = registrationNumber;
@@ -34,30 +36,11 @@ public class Car {
         this.make = make;
         this.model = model;
         this.price = price;
-        for (int i = 0; i < 3 && i < colors.length; i++) {
+
+        // Only take three of the first colors
+        for (int i = 0; i < this.colors.length && i<colors.length; i++) {
             this.colors[i] = colors[i];
         }
-    }
-
-    public static Car fromData(Data data) {
-        JSONObject object = data.getText().optJSONObject(CAR);
-
-        Car car = new Car(
-                object.optString(REG_NO),
-                object.optString(MAKE),
-                object.optString(MODEL),
-                object.optInt(YEAR),
-                object.optInt(PRICE),
-                object.optJSONArray(COLORS).optString(0),
-                object.optJSONArray(COLORS).optString(1),
-                object.optJSONArray(COLORS).optString(2)
-        );
-
-        car.left = object.optInt(LEFT, 0);
-
-        car.setImage(data.getBinary());
-
-        return car;
     }
 
     public String getRegistrationNumber() {
@@ -78,12 +61,6 @@ public class Car {
 
     public String[] getColors() {
         return colors;
-    }
-
-    public void setColors(String... colors) {
-        for (int i = 0; i < 3; i++) {
-            this.colors[i] = i < colors.length ? colors[i] : null;
-        }
     }
 
     public String getMake() {
@@ -110,31 +87,52 @@ public class Car {
         this.price = price;
     }
 
-    public byte[] getImage() {
-        return image;
+    public void setColors(String... colors) {
+        for (int i = 0; i < 3; i++) {
+            this.colors[i] = i<colors.length ? colors[i] : null;
+        }
     }
 
     public void setImage(byte[] image) {
         this.image = image;
     }
 
+    /**
+     * Sets the Car image from file by reading it
+     * @param filePath  the path to the image
+     */
     public void setImage(String filePath) {
-        File file = new File(filePath);
         try {
-            image = new FileInputStream(file).readAllBytes();
+            image = new FileInputStream(filePath).readAllBytes();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public int getLeft() {
-        return left;
+    public byte[] getImage() {
+        return image;
     }
 
-    public void setLeft(int left) {
-        this.left = left;
-    }
 
+    // Key for Car to JSON Conversion
+    private static final String    REG_NO = "regNo";
+    private static final String    YEAR = "year";
+    private static final String    COLORS = "colors";
+    private static final String    MAKE = "make";
+    private static final String    MODEL = "model";
+    private static final String    PRICE = "price";
+    private static final String    LEFT = "left";
+
+    private static final String     CAR = Data.CAR;
+    private static final String     ID = Data.CAR_ID;
+
+    /**
+     * Serializes Car object to Data class to transfer over network.
+     * Caution: Data Type will be <b>UPDATE_CAR</b>
+     * @param id    Car id
+     * @return      Serialized Car Data in Data
+     * @throws JSONException    when error in putting value in JSONObject
+     */
     public Data toData(int id) throws JSONException {
         JSONObject object = new JSONObject();
 
@@ -157,5 +155,32 @@ public class Car {
         root.put(ID, id);
 
         return new Data(Data.UPDATE_CAR, root, image);
+    }
+
+    /**
+     * Deserializes Data to get a car instance.
+     * <b>Does not depend on Data.TYPE</b>
+     * @param data  data to deserialize from
+     * @return      newly created Car instance
+     */
+    public static Car fromData(Data data) {
+        JSONObject object = data.getText().optJSONObject(CAR);
+
+        Car car = new Car(
+                object.optString(REG_NO),
+                object.optString(MAKE),
+                object.optString(MODEL),
+                object.optInt(YEAR),
+                object.optInt(PRICE),
+                object.optJSONArray(COLORS).optString(0, null),
+                object.optJSONArray(COLORS).optString(1, null),
+                object.optJSONArray(COLORS).optString(2, null)
+        );
+
+        // Car Left was added After
+        car.left = object.optInt(LEFT, 0);
+        car.setImage(data.getBinary());
+
+        return car;
     }
 }

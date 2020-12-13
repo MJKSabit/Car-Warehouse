@@ -10,7 +10,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.Semaphore;
 
-public class ResponseSender implements Runnable{
+public final class ResponseSender implements Runnable{
 
     DataOutputStream out;
     Closeable client;

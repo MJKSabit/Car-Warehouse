@@ -8,8 +8,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public class Data {
-
+public final class Data {
 
     private final String TYPE;
     private final JSONObject text;

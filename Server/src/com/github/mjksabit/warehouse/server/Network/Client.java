@@ -12,20 +12,20 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Client implements Runnable, Closeable {
+public final class Client implements Runnable, Closeable {
 
-    private static final ArrayList<Client> clients = new ArrayList<>();
+    private static final ArrayList<Client> clientList = new ArrayList<>();
 
     private static final Logger logger = LogManager.getLogger(Client.class);
 
     private final Socket socket;
 
-    private InputStream inputStream = null;
-    private OutputStream outputStream = null;
-    private DataInputStream in = null;
-    private DataOutputStream out = null;
-
     private ResponseSender sender;
+
+    private final InputStream inputStream;
+    private final OutputStream outputStream;
+    private final DataInputStream in;
+    private final DataOutputStream out;
 
     private boolean isManufacturer = false;
     private boolean isAdmin = false;
@@ -41,7 +41,7 @@ public class Client implements Runnable, Closeable {
         in = new DataInputStream(inputStream);
         out = new DataOutputStream(outputStream);
 
-        clients.add(this);
+        clientList.add(this);
 
         new Thread(this).start();
     }
@@ -62,7 +62,7 @@ public class Client implements Runnable, Closeable {
     public static void notifyAllCar(int id) {
         try {
             var carData = carUpdate(id);
-            for (var client : clients)
+            for (var client : clientList)
                 if (!client.isAdmin)
                     client.sender.addToQueue(carData);
         } catch (JSONException e) {
@@ -77,17 +77,18 @@ public class Client implements Runnable, Closeable {
         Thread.currentThread().setName("Unknown");
         sender.renameThread("Unknown-Request");
 
-        logger.info("Client Connected");
+        logger.info("run: Client Connected");
 
         try {
             while (true) {
-                logger.info("Waiting For Request");
+                logger.info("run: Waiting For Request");
                 var request = new Data(in);
-                logger.info("REQUEST: " + request.getTYPE());
+                logger.info("run: New Request: " + request.getTYPE());
 
                 var response = route(request);
                 response.getText().put(Data.REQUEST_KEY, request.getTYPE());
                 response.getText().put(Data.REMOVE_REQUESTER, true);
+                logger.info("run: Response "+response.getTYPE()+":"+response.getText());
 
                 sender.addToQueue(response);
             }
@@ -293,7 +294,7 @@ public class Client implements Runnable, Closeable {
 
     @Override
     public void close() throws IOException {
-        clients.remove(this);
+        clientList.remove(this);
 
         inputStream.close();
         outputStream.close();

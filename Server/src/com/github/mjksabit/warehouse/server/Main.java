@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 
-public class Main {
+public final class Main {
 
     private static final int PORT = 26979;
 

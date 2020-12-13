@@ -14,12 +14,12 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class DB {
+public final class DB {
 
     public static final String DATABASE_FILE = "database.db";
     public static final String IMAGE_PATH = "images";
 
-    public static final String ADMIN_PASSWORD = "password";
+    private static final String ADMIN_PASSWORD = "password";
     /*
     CREATE TABLE "users" (
 	    "username"	TEXT NOT NULL,
