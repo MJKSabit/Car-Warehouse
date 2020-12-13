@@ -390,4 +390,16 @@ public class DB {
 
         return users;
     }
+
+    public void removeUser(String username) {
+        String query = "DELETE FROM "+USER_TABLE+" WHERE "+USER_USERNAME+"=?";
+
+        logger.info(query+username);
+        try (PreparedStatement statement = dbConnect.prepareStatement(query)){
+            statement.setString(1, username);
+            statement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 }

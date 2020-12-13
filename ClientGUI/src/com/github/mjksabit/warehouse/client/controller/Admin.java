@@ -55,7 +55,7 @@ public class Admin extends Controller{
 
     @FXML
     void deleteSelected(ActionEvent event) {
-
+        network.removeUser(userListView.getSelectionModel().getSelectedItem(), userListView.getItems());
     }
 
     @FXML

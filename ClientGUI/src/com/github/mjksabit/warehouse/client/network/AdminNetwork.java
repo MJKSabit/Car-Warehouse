@@ -50,4 +50,15 @@ public class AdminNetwork {
             }
         });
     }
+
+    public void removeUser(String username, ObservableList<String> list) {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put(Data.USER, username);
+        } catch (JSONException ignored) {}
+
+        ServerConnect.getInstance().sendRequest(new Data(Data.REMOVE_USER, jsonObject, null),
+                response -> Platform.runLater(() -> list.remove(username)));
+    }
 }

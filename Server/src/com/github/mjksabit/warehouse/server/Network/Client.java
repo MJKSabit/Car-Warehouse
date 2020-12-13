@@ -30,7 +30,7 @@ public class Client implements Runnable, Closeable {
     private boolean isManufacturer = false;
     private boolean isAdmin = false;
 
-    private String username = null;
+    private String user = null;
 
     public Client(Socket socket) throws IOException {
         this.socket = socket;
@@ -117,7 +117,7 @@ public class Client implements Runnable, Closeable {
             case Data.ADMIN: return admin(request);
             case Data.ADD_USER: return addUser(request);
             case Data.GET_USERS: return getUsers(request);
-//            case Data.REMOVE_USER: return removeUser(request);
+            case Data.REMOVE_USER: return removeUser(request);
 
             case Data.LOGOUT:
                 return logout(request);
@@ -130,14 +130,27 @@ public class Client implements Runnable, Closeable {
         }
     }
 
+    private Data unauthorized() throws JSONException {
+        JSONObject object = new JSONObject();
+        object.put(Data.INFO, "You are not authorized!");
+        return new Data(Data.ERROR, object, null);
+    }
+
+    private Data removeUser(Data request) throws JSONException {
+        if (!isAdmin)
+            return unauthorized();
+
+        DB.getInstance().removeUser(request.getText().optString(Data.USER));
+        return new Data(Data.REMOVE_USER, new JSONObject(), null);
+    }
+
     private Data getUsers(Data request) throws JSONException {
         JSONObject object = new JSONObject();
         String type = null;
 
-        if (!isAdmin) {
-            type = Data.ERROR;
-            object.put(Data.INFO, "You are not authorized!");
-        } else {
+        if (!isAdmin)
+            return unauthorized();
+        else {
             type = Data.GET_USERS;
             ArrayList<String> users = DB.getInstance().getUsers();
             object.put(Data.USER, new JSONArray(users));
@@ -154,15 +167,14 @@ public class Client implements Runnable, Closeable {
                 request.getText().getString(Data.LOGIN_PASSWORD)))
             return new Data(Data.ADD_USER, object, null);
 
-        object.put(Data.INFO, "Can not add user: " + username);
-        return new Data(Data.ERROR, object, null);
+        return unauthorized();
     }
 
     private Data admin(Data request) throws JSONException {
         isAdmin = DB.getInstance().adminLogin(request.getText().optString(Data.LOGIN_PASSWORD));
         if(isAdmin) {
             logger.info("ADMIN logged in");
-            username = "admin";
+            user = "admin";
             Thread.currentThread().setName("ADMIN");
             sender.renameThread("ADMIN-Request");
 
@@ -177,11 +189,8 @@ public class Client implements Runnable, Closeable {
     }
 
     private Data editCar(Data request) throws JSONException {
-        if (!isManufacturer || !DB.getInstance().isManufacturer(username)) {
-            JSONObject object = new JSONObject();
-            object.putOpt(Data.INFO, "Viewer can't edit a car!");
-            return new Data(Data.ERROR, object, null);
-        }
+        if (!isManufacturer || !DB.getInstance().isManufacturer(user))
+            return unauthorized();
 
         Data data = DB.getInstance().editCar(request);
 
@@ -193,11 +202,8 @@ public class Client implements Runnable, Closeable {
     }
 
     private Data addCar(Data request) throws JSONException {
-        if (!isManufacturer || !DB.getInstance().isManufacturer(username)) {
-            JSONObject object = new JSONObject();
-            object.putOpt(Data.INFO, "Viewer can't add a car!");
-            return new Data(Data.ERROR, object, null);
-        }
+        if (!isManufacturer || !DB.getInstance().isManufacturer(user))
+            return unauthorized();
 
         int id = DB.getInstance().addCar(Car.fromData(request));
         notifyAllCar(id);
@@ -205,11 +211,8 @@ public class Client implements Runnable, Closeable {
     }
 
     private Data removeCar(Data request) throws JSONException {
-        if (!isManufacturer || !DB.getInstance().isManufacturer(username)) {
-            JSONObject object = new JSONObject();
-            object.putOpt(Data.INFO, "Viewer can't remove a car!");
-            return new Data(Data.ERROR, object, null);
-        }
+        if (!isManufacturer || !DB.getInstance().isManufacturer(user))
+            return unauthorized();
 
         boolean isRemoved = DB.getInstance().removeCar(request.getText().optInt(Data.CAR_ID));
         String type;
@@ -230,7 +233,7 @@ public class Client implements Runnable, Closeable {
 
         if (isManufacturer) {
             JSONObject object = new JSONObject();
-            object.putOpt(Data.INFO, "Manufacturer can't buy.");
+            object.putOpt(Data.INFO, "Only Viewer can buy!");
             return new Data(Data.ERROR, object, null);
         }
 
@@ -264,25 +267,25 @@ public class Client implements Runnable, Closeable {
         response.getText().put(Data.REQUEST_KEY, request.getTYPE());
 
         if (response.getTYPE().equals(Data.LOGIN)) {
-            this.username = jsonObject.optString(Data.LOGIN_USERNAME);
+            this.user = jsonObject.optString(Data.LOGIN_USERNAME);
             this.isManufacturer = true;
-            Thread.currentThread().setName(username);
-            sender.renameThread(username + "-Request");
+            Thread.currentThread().setName(user);
+            sender.renameThread(user + "-Request");
 
-            logger.info("Logged in <" + username + ">");
+            logger.info("Logged in <" + user + ">");
         }
 
         return response;
     }
 
     private Data logout(Data request) {
-        logger.info("Logged out <" + username + ">");
+        logger.info("Logged out <" + user + ">");
 
         Thread.currentThread().setName("Unknown");
         sender.renameThread("Unknown-Request");
 
         isAdmin = isManufacturer = false;
-        username = null;
+        user = null;
 
         return new Data(Data.LOGOUT, new JSONObject(), null);
     }
