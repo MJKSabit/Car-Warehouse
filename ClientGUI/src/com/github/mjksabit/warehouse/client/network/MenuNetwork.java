@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class MenuNetwork {
 
@@ -25,9 +26,12 @@ public class MenuNetwork {
     private volatile Map<Integer, Car> cars = new HashMap<>();
     private volatile Map<Integer, Card> cardMap = new HashMap<>();
 
+    private volatile Predicate<Card> cardFilter = null;
+
     public MenuNetwork(Menu menuController, ObservableList<Node> cards) {
         this.menuController = menuController;
         this.cards = cards;
+        this.cardFilter = card -> true;
 
         ResponseListener responseListener = ServerConnect.getInstance().getResponseListener();
 
@@ -51,9 +55,32 @@ public class MenuNetwork {
                 response -> {});
     }
 
+    public void setCardFilter(Predicate<Card> cardFilter) {
+        this.cardFilter = cardFilter;
+        updateCardFilter();
+    }
+
+    public void resetCardFilter() {
+        this.cardFilter = card -> true;
+        updateCardFilter();
+    }
+
+    private void updateCardFilter() {
+        cards.clear();
+
+        var carIds = cardMap.keySet();
+        for (var carId : carIds)
+            if (cardFilter.test(cardMap.get(carId)))
+                cards.add(cardMap.get(carId));
+    }
+
+
     private void removeCar(int id) {
-        if (cars.containsKey(id) && cardMap.containsKey(id))
-            Platform.runLater(() -> cards.remove(cardMap.remove(id)));
+        if (cardMap.containsKey(id)) {
+            Card card = cardMap.remove(id);
+            if (cardFilter.test(card))
+                Platform.runLater(() -> cards.remove(card));
+        }
     }
 
     public void setViewer(boolean viewer) {
@@ -90,10 +117,13 @@ public class MenuNetwork {
     }
 
     public void updateCar(int id, Car car) {
-        if (!cars.containsKey(id)) {
+        if (!cardMap.containsKey(id)) {
             Card card = new Card(car);
-            Platform.runLater(() -> cards.add(card));
             cardMap.put(id, card);
+
+            if(cardFilter.test(card))
+                Platform.runLater(() -> cards.add(card));
+
             card.setOnBuyListener((actionEvent -> buyCar(id)));
             card.setManufacturerListener(actionEvent -> {
                 Edit edit = menuController.getEdit();
@@ -102,7 +132,16 @@ public class MenuNetwork {
                 edit.show("Edit Car");
             }, actionEvent -> removeCarRequest(id));
         } else {
-            Platform.runLater(() -> cardMap.get(id).setCar(car));
+            if (car==null) System.out.println("NULL CAR");
+            Platform.runLater(() -> {
+                Card card = cardMap.get(id);
+                card.setCar(car);
+                if (cardFilter.test(card)) {
+                    if (!cards.contains(card)) cards.add(card);
+                } else {
+                    cards.remove(card);
+                }
+            });
         }
 
         cars.put(id, car);

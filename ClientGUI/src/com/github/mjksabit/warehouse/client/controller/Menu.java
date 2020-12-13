@@ -1,7 +1,9 @@
 package com.github.mjksabit.warehouse.client.controller;
 
 import com.github.mjksabit.warehouse.client.FXUtil;
+import com.github.mjksabit.warehouse.client.model.Car;
 import com.github.mjksabit.warehouse.client.network.MenuNetwork;
+import com.github.mjksabit.warehouse.client.view.Card;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import javafx.collections.ObservableList;
@@ -13,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
 public class Menu extends Controller {
 
@@ -117,6 +120,7 @@ public class Menu extends Controller {
     private void hideSearchBar() {
         makeSearchContainer.setVisible(false);
         regSearchContainer.setVisible(false);
+        network.resetCardFilter();
     }
 
     @FXML
@@ -132,7 +136,11 @@ public class Menu extends Controller {
 
     @FXML
     void searchByRegNo(ActionEvent event) {
-
+        network.setCardFilter(card -> {
+            Car car = card.getCar();
+            String regNo = registrationNo.getText().toLowerCase();
+            return car.getRegistrationNumber().toLowerCase().contains(regNo);
+        });
     }
 
     @FXML

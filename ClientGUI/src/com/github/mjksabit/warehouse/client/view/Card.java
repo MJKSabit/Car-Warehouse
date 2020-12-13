@@ -92,7 +92,11 @@ public class Card extends AnchorPane {
         setCar(car);
     }
 
+    private Car car = null;
+
     public void setCar(Car car) {
+        this.car = car;
+
         Circle[] circles = {color3, color2, color1};
 
         carMake.setText(car.getMake());
@@ -137,5 +141,9 @@ public class Card extends AnchorPane {
     public void setManufacturerListener(EventHandler<ActionEvent> edit, EventHandler<ActionEvent> remove) {
         editButton.setOnAction(edit);
         deleteButton.setOnAction(remove);
+    }
+
+    public Car getCar() {
+        return car;
     }
 }
