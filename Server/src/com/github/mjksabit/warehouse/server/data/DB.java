@@ -16,22 +16,31 @@ import java.util.ArrayList;
 
 public final class DB {
 
-    public static final String DATABASE_FILE = "database.db";
-    public static final String IMAGE_PATH = "images";
+    private static final Logger logger = LogManager.getLogger(DB.class);
 
+    // JDBC Prefix for sqlite
+    private static final String SQLITE_PREFIX = "jdbc:sqlite:";
+    // Database Location, Can either be absolute or relative
+    private static final String DATABASE_FILE = "database.db";
+    
+    // Save image in that directory
+    private static final String IMAGE_PATH = "images";
+
+    // Admin Log in Password
     private static final String ADMIN_PASSWORD = "password";
+
     /*
     CREATE TABLE "users" (
 	    "username"	TEXT NOT NULL,
 	    "password"	TEXT NOT NULL,
 	    PRIMARY KEY("username")
     )
-     */
-    public static final String USER_USERNAME = "username";
-    public static final String USER_PASSWORD = "password";
+    */
+    private static final String USER_TABLE = "users";
+    
+    private static final String USER_USERNAME = "username";
+    private static final String USER_PASSWORD = "password";
 
-    public static final String CAR_TABLE = "cars";
-    public static final String USER_TABLE = "users";
     /*
     CREATE TABLE "cars" (
 	    "carid"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -46,35 +55,41 @@ public final class DB {
     	"color3"	TEXT DEFAULT NULL,
     	"image"	TEXT NOT NULL
     )
-     */
-    public static final String CAR_ID = "carid";
-    public static final String CAR_REG_NO = "registrationNumber";
-    public static final String CAR_MAKE = "make";
-    public static final String CAR_MODEL = "model";
-    public static final String CAR_YEAR = "year";
-    public static final String CAR_PRICE = "price";
-    public static final String CAR_AVAILABLE = "available";
-    public static final String CAR_IMAGE = "image";
-    public static final String CAR_COLOR_1 = "color1";
-    public static final String CAR_COLOR_2 = "color2";
-    public static final String CAR_COLOR_3 = "color3";
-    private static final Logger logger = LogManager.getLogger(DB.class);
-    private static DB instance = null;
+    */
+    private static final String CAR_TABLE = "cars";
+    
+    private static final String CAR_ID          = "carid";
+    private static final String CAR_REG_NO      = "registrationNumber";
+    private static final String CAR_MAKE        = "make";
+    private static final String CAR_MODEL       = "model";
+    private static final String CAR_YEAR        = "year";
+    private static final String CAR_PRICE       = "price";
+    private static final String CAR_AVAILABLE   = "available";
+    private static final String CAR_IMAGE       = "image";
+    private static final String CAR_COLOR_1     = "color1";
+    private static final String CAR_COLOR_2     = "color2";
+    private static final String CAR_COLOR_3     = "color3";
+
+    // Database Connection
     private final Connection dbConnect;
 
+    // Private Constructor for Singleton
     private DB() {
         dbConnect = makeConnection();
     }
 
-    public static DB getInstance() {
+    private static DB instance = null;
+    // Singleton instance Getter
+    public static DB get() {
         if (instance == null)
             instance = new DB();
         return instance;
     }
 
+    // Connect to Database, called once from constructor
     private Connection makeConnection() {
-        String DATABASE_LOCATION = "jdbc:sqlite:" + new File(DATABASE_FILE).getAbsolutePath();
-        logger.info("Connecting to Database: " + DATABASE_LOCATION);
+        String DATABASE_LOCATION = SQLITE_PREFIX + new File(DATABASE_FILE).getAbsolutePath();
+        logger.info("makeConnection: " + DATABASE_LOCATION);
         try {
             Connection connection = DriverManager.getConnection(DATABASE_LOCATION);
             logger.info("Connected to database");
@@ -86,48 +101,62 @@ public final class DB {
         }
     }
 
+    // Login Validation using PLAIN PASSWORD
+    // Todo -- HASHED PASSWORD
     public Data login(String username, String password) throws JSONException {
         username = username.toLowerCase();
-        String type;
+
+        String type = Data.ERROR;
         JSONObject jsonObject = new JSONObject();
 
-        String query = "SELECT " +
-                USER_PASSWORD +
-                " from " + USER_TABLE +
+        String query =
+                "SELECT " +
+                        USER_PASSWORD +
+                " from " +
+                        USER_TABLE +
                 " where " +
-                USER_USERNAME + " = ?";
+                        USER_USERNAME + " = ?";
 
         try (PreparedStatement statement = dbConnect.prepareStatement(query)) {
+            // USER_USERNAME = username
             statement.setString(1, username);
 
             ResultSet resultSet = statement.executeQuery();
 
-            if (resultSet.next() && resultSet.getString(USER_PASSWORD).equals(password)) {
+            if(!resultSet.next()) {
+                jsonObject.put(Data.INFO, "No such user exists!");
+                type = Data.ERROR;
+            } else if (resultSet.getString(USER_PASSWORD).equals(password)) {
                 type = Data.LOGIN;
                 jsonObject.put(Data.INFO, "Welcome back " + username + "!");
             } else {
                 jsonObject.put(Data.INFO, "Password mismatch!");
                 type = Data.ERROR;
             }
-        } catch (SQLException throwables) {
-            jsonObject.put(Data.INFO, "No such user exists!");
-            type = Data.ERROR;
-        }
+        } catch (SQLException t) { t.printStackTrace(); }
 
         return new Data(type, jsonObject, null);
     }
 
+    // Method is synchronized so that buyer can not overbuy a product
+    // However, protection is also given in Database level
+    // with Conditional Checking of CAR_AVAILABLE>0
     public synchronized Data buyCar(int id) throws JSONException {
         String type;
         JSONObject jsonObject = new JSONObject();
 
-        String update = "UPDATE " + CAR_TABLE +
+        String update =
+                "UPDATE " +
+                    CAR_TABLE +
                 " SET " +
-                CAR_AVAILABLE + " = " + CAR_AVAILABLE + " - 1" +
+                    CAR_AVAILABLE + " = " + CAR_AVAILABLE + " - 1" +
                 " WHERE " +
-                CAR_AVAILABLE + ">0 AND " + CAR_ID + "=?";
+                    CAR_AVAILABLE + ">0" +
+                    " AND " +
+                    CAR_ID + "=?";
 
         try (PreparedStatement statement = dbConnect.prepareStatement(update)) {
+            // CAR_ID = id
             statement.setInt(1, id);
 
             int execute = statement.executeUpdate();
@@ -164,11 +193,16 @@ public final class DB {
         return carData;
     }
 
+    // Returns null if no car found
     public Car getCar(int id) {
         Car car = null;
 
-        String query = "SELECT * FROM " + CAR_TABLE +
-                " WHERE " + CAR_ID + "=?";
+        String query =
+                "SELECT * " +
+                "FROM " +
+                        CAR_TABLE +
+                " WHERE " +
+                        CAR_ID + "=?";
 
         try (PreparedStatement statement = dbConnect.prepareStatement(query)) {
             statement.setInt(1, id);
@@ -190,29 +224,45 @@ public final class DB {
             car.setImage(IMAGE_PATH + File.separator + resultSet.getString(CAR_IMAGE));
 
         } catch (SQLException throwables) {
-            logger.info("No car with id = " + id);
+            logger.info("No car [Either removed or not added] with id = " + id);
         }
 
         return car;
     }
 
     public boolean removeCar(int id) {
-        String query = "SELECT " + CAR_IMAGE +
-                " FROM " + CAR_TABLE +
-                " WHERE " + CAR_ID + "=?";
-        String delete = "DELETE FROM " + CAR_TABLE + " WHERE " + CAR_ID + "=?";
+
+        // Another Query to delete the Picture
+        String query =
+                "SELECT " +
+                        CAR_IMAGE +
+                " FROM " +
+                        CAR_TABLE +
+                " WHERE " +
+                        CAR_ID + "=?";
+
+        // Delete Record from database
+        String delete =
+                "DELETE " +
+                "FROM " +
+                        CAR_TABLE +
+                " WHERE " +
+                        CAR_ID + "=?";
 
         try (PreparedStatement image = dbConnect.prepareStatement(query);
              PreparedStatement statement = dbConnect.prepareStatement(delete)) {
+            // CAR_ID = id
             image.setInt(1, id);
-
             ResultSet set = image.executeQuery();
 
             set.next();
+
+            // Will throw SQLException if no car found
             String imageName = set.getString(CAR_IMAGE);
             if (!new File(IMAGE_PATH + File.separator + imageName).delete())
                 logger.error("Can not delete image file: " + imageName);
 
+            // CAR_ID = id
             statement.setInt(1, id);
             int count = statement.executeUpdate();
 
@@ -225,29 +275,38 @@ public final class DB {
 
     public int addCar(Car car) {
 
+        // Data Validation before adding
+        if (car.getPrice()<0 || car.getLeft()<0 || car.getYearMade()<0)
+            return -1;
+
+        // UUID to generate unique id for each image
         String uuid = UuidUtil.getTimeBasedUuid().toString();
+
         try {
+            // Write to file from Data byte
             FileOutputStream fos = new FileOutputStream(IMAGE_PATH + File.separator + uuid, false);
             fos.write(car.getImage());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        String query = "INSERT INTO " +
-                CAR_TABLE +
-                " (" +
-                CAR_REG_NO + ", " +
-                CAR_MAKE + ", " +
-                CAR_MODEL + ", " +
-                CAR_YEAR + ", " +
-                CAR_PRICE + ", " +
-                CAR_AVAILABLE + ", " +
-                CAR_COLOR_1 + ", " +
-                CAR_COLOR_2 + ", " +
-                CAR_COLOR_3 + ", " +
-                CAR_IMAGE +
-                ") " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT " +
+                "INTO " +
+                    CAR_TABLE +
+                    " (" +
+                        CAR_REG_NO + ", " +
+                        CAR_MAKE + ", " +
+                        CAR_MODEL + ", " +
+                        CAR_YEAR + ", " +
+                        CAR_PRICE + ", " +
+                        CAR_AVAILABLE + ", " +
+                        CAR_COLOR_1 + ", " +
+                        CAR_COLOR_2 + ", " +
+                        CAR_COLOR_3 + ", " +
+                        CAR_IMAGE +
+                    ") " +
+                "VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = dbConnect.prepareStatement(query)) {
             statement.setString(1, car.getRegistrationNumber());
@@ -274,6 +333,7 @@ public final class DB {
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            // Validation Failed
             return -1;
         }
     }
@@ -285,31 +345,42 @@ public final class DB {
 
         Car car = Car.fromData(request);
 
-        String query = "SELECT " + CAR_IMAGE +
-                " FROM " + CAR_TABLE +
-                " WHERE " + CAR_ID + "=?";
+        String query =
+                "SELECT " +
+                        CAR_IMAGE +
+                " FROM " +
+                        CAR_TABLE +
+                " WHERE " +
+                        CAR_ID + "=?";
 
-        String update = "UPDATE " +
-                CAR_TABLE +
+        String update =
+                "UPDATE " +
+                        CAR_TABLE +
                 " SET " +
-                CAR_REG_NO + "=? , " +
-                CAR_MAKE + "=? , " +
-                CAR_MODEL + "=? , " +
-                CAR_YEAR + "=? , " +
-                CAR_PRICE + "=? , " +
-                CAR_AVAILABLE + "=? , " +
-                CAR_COLOR_1 + "=? , " +
-                CAR_COLOR_2 + "=? , " +
-                CAR_COLOR_3 + "=? " +
-                " WHERE " + CAR_ID + "=?";
+                        CAR_REG_NO + "=? , " +
+                        CAR_MAKE + "=? , " +
+                        CAR_MODEL + "=? , " +
+                        CAR_YEAR + "=? , " +
+                        CAR_PRICE + "=? , " +
+                        CAR_AVAILABLE + "=? , " +
+                        CAR_COLOR_1 + "=? , " +
+                        CAR_COLOR_2 + "=? , " +
+                        CAR_COLOR_3 + "=? " +
+                " WHERE " +
+                        CAR_ID + "=?";
 
-        try (PreparedStatement image = dbConnect.prepareStatement(query);
+        if (car.getPrice()<0 || car.getLeft()<0 || car.getYearMade()<0) {
+            type = Data.ERROR;
+            jsonObject.put(Data.INFO, "Data Validation Error!");
+        }
+        else try (PreparedStatement image = dbConnect.prepareStatement(query);
              PreparedStatement statement = dbConnect.prepareStatement(update)) {
 
             image.setInt(1, id);
             ResultSet set = image.executeQuery();
-
             set.next();
+
+            // Reuse image name
             String imageName = set.getString(CAR_IMAGE);
 
             statement.setString(1, car.getRegistrationNumber());
@@ -348,6 +419,7 @@ public final class DB {
             statement.setString(1, username);
             ResultSet set = statement.executeQuery();
 
+            // Has one record means user exists
             return set.next();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -360,9 +432,12 @@ public final class DB {
     }
 
     public boolean addUser(String username, String password) {
-        String query = "INSERT INTO " + USER_TABLE +
-                " (" + USER_USERNAME + ", " + USER_PASSWORD + ")" +
-                " VALUES (?, ?)";
+        String query =
+                "INSERT INTO " +
+                        USER_TABLE +
+                            " (" + USER_USERNAME + ", " + USER_PASSWORD + ")" +
+                " VALUES " +
+                        "(?, ?)";
 
         try (PreparedStatement statement = dbConnect.prepareStatement(query)){
             statement.setString(1, username.toLowerCase());
@@ -377,7 +452,12 @@ public final class DB {
     public ArrayList<String> getUsers() {
         ArrayList<String> users = new ArrayList<>();
 
-        String query = "SELECT " + USER_USERNAME + " FROM " + USER_TABLE;
+        String query =
+                "SELECT " +
+                        USER_USERNAME +
+                " FROM " +
+                        USER_TABLE;
+
         try (PreparedStatement statement = dbConnect.prepareStatement(query)){
             ResultSet resultSet = statement.executeQuery();
 
@@ -392,7 +472,14 @@ public final class DB {
     }
 
     public void removeUser(String username) {
-        String query = "DELETE FROM "+USER_TABLE+" WHERE "+USER_USERNAME+"=?";
+        username = username.toLowerCase();
+
+        String query =
+                "DELETE " +
+                "FROM "+
+                        USER_TABLE+
+                " WHERE " +
+                        USER_USERNAME + "=?";
 
         logger.info(query+username);
         try (PreparedStatement statement = dbConnect.prepareStatement(query)){

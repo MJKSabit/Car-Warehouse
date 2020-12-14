@@ -166,7 +166,7 @@ public final class Client implements Runnable, Closeable {
      */
     private static Data carUpdate(int id) throws JSONException {
         // Get car from database, null if not found
-        Car car = DB.getInstance().getCar(id);
+        Car car = DB.get().getCar(id);
 
         // not null means, either EDIT or ADD or UPDATE
         if (car != null)
@@ -209,7 +209,7 @@ public final class Client implements Runnable, Closeable {
         String username = jsonObject.optString(Data.LOGIN_USERNAME);
         String password = jsonObject.optString(Data.LOGIN_PASSWORD);
 
-        Data response = DB.getInstance().login(username, password);
+        Data response = DB.get().login(username, password);
 
         response.getText().put(Data.REQUEST_KEY, request.getTYPE());
 
@@ -228,11 +228,15 @@ public final class Client implements Runnable, Closeable {
 
     private Data addCar(Data request) throws JSONException {
         // Check if Manufacturer, Second Check is to ensure the manufacturer is not removed by admin
-        if (!isManufacturer || !DB.getInstance().isManufacturer(user))
+        if (!isManufacturer || !DB.get().isManufacturer(user))
             return unauthorized();
 
         // Add car in Database
-        int id = DB.getInstance().addCar(Car.fromData(request));
+        int id = DB.get().addCar(Car.fromData(request));
+
+        // Maybe year was not an integer...
+        if (id==-1)
+            return new Data(Data.ERROR, new JSONObject().put(Data.INFO, "Data Validation Failed!"), null);
 
         // Notify everyone about the added Car
         notifyAllCar(id);
@@ -242,11 +246,11 @@ public final class Client implements Runnable, Closeable {
 
     private Data removeCar(Data request) throws JSONException {
         // Check if Manufacturer, Second Check is to ensure the manufacturer is not removed by admin
-        if (!isManufacturer || !DB.getInstance().isManufacturer(user))
+        if (!isManufacturer || !DB.get().isManufacturer(user))
             return unauthorized();
 
         // Remove car, and check if deleted
-        boolean isRemoved = DB.getInstance().removeCar(request.getText().optInt(Data.CAR_ID));
+        boolean isRemoved = DB.get().removeCar(request.getText().optInt(Data.CAR_ID));
         String type;
         JSONObject object = new JSONObject();
 
@@ -265,11 +269,11 @@ public final class Client implements Runnable, Closeable {
     private Data editCar(Data request) throws JSONException {
 
         // Check if Manufacturer, Second Check is to ensure the manufacturer is not removed by admin
-        if (!isManufacturer || !DB.getInstance().isManufacturer(user))
+        if (!isManufacturer || !DB.get().isManufacturer(user))
             return unauthorized();
 
         // Database Request for editing a car
-        Data data = DB.getInstance().editCar(request);
+        Data data = DB.get().editCar(request);
 
         // If not ERROR, Send data to every connected client to update the car
         if (!data.getTYPE().equals(Data.ERROR)) {
@@ -280,7 +284,7 @@ public final class Client implements Runnable, Closeable {
     }
 
     private Data buyCar(Data request) throws JSONException {
-        Data data = DB.getInstance().buyCar(request.getText().optInt(Data.CAR_ID));
+        Data data = DB.get().buyCar(request.getText().optInt(Data.CAR_ID));
 
         // Manufacturer can not buy
         if (isManufacturer) {
@@ -304,7 +308,7 @@ public final class Client implements Runnable, Closeable {
         new Thread(() -> {
             try {
                 // Get all cars from database
-                var cars = DB.getInstance().allCars();
+                var cars = DB.get().allCars();
                 for (var car : cars)
                     sender.addToQueue(car);
             } catch (JSONException e) {
@@ -319,7 +323,7 @@ public final class Client implements Runnable, Closeable {
     // Admin Login
     private Data admin(Data request) throws JSONException {
         // Password Check from Database
-        isAdmin = DB.getInstance().adminLogin(request.getText().optString(Data.LOGIN_PASSWORD));
+        isAdmin = DB.get().adminLogin(request.getText().optString(Data.LOGIN_PASSWORD));
 
         // Authenticated Admin
         if(isAdmin) {
@@ -350,7 +354,7 @@ public final class Client implements Runnable, Closeable {
             return unauthorized();
 
         // Successful only if new user is added to database
-        if(DB.getInstance().addUser(username,
+        if(DB.get().addUser(username,
                 request.getText().getString(Data.LOGIN_PASSWORD)))
             return new Data(Data.ADD_USER, object, null);
 
@@ -370,7 +374,7 @@ public final class Client implements Runnable, Closeable {
             JSONObject object = new JSONObject();
 
             // Get all users from database
-            ArrayList<String> users = DB.getInstance().getUsers();
+            ArrayList<String> users = DB.get().getUsers();
             // Put in Response Object
             object.put(Data.USER, new JSONArray(users));
             return new Data(Data.GET_USERS, object, null);
@@ -384,7 +388,7 @@ public final class Client implements Runnable, Closeable {
             return unauthorized();
 
         // Delete from Database
-        DB.getInstance().removeUser(request.getText().optString(Data.USER));
+        DB.get().removeUser(request.getText().optString(Data.USER));
         return new Data(Data.REMOVE_USER, new JSONObject(), null);
     }
 
