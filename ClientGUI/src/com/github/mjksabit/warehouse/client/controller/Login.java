@@ -13,11 +13,6 @@ import java.io.IOException;
 
 public class Login extends Controller {
 
-    private LoginNetwork network;
-
-    @FXML
-    private JFXButton togglerButton;
-
     @FXML
     private JFXTextField manuUsername;
 
@@ -33,13 +28,18 @@ public class Login extends Controller {
     @FXML
     private AnchorPane manuPane;
 
+    private LoginNetwork network;
+
     public void initialize() {
+        // Get New instance to manage Login Related Network Request-Response
         network = new LoginNetwork(this);
 
+        // View Property Binding For Automatic Toggle
         manuPane.visibleProperty().bind(manuPane.disableProperty().not());
         adminPane.visibleProperty().bind(adminPane.disableProperty().not());
         adminPane.disableProperty().bind(manuPane.disableProperty().not());
 
+        // Show Manufacturer Login Options Initially
         manuPane.setDisable(false);
 
         manuUsername.setText("sabit");
@@ -59,9 +59,14 @@ public class Login extends Controller {
     @FXML
     void viewerLogin(ActionEvent event) throws IOException {
         Menu menu = FXUtil.loadFXML("menu");
+
+        // Show Viewer Options Only
         menu.init("Viewer");
         menu.asViewer();
+
+        // Show in Current Stage
         menu.setStage(getStage());
+
         menu.show("MJK Warehouse - Buy Car");
     }
 

@@ -5,6 +5,7 @@ import com.github.mjksabit.warehouse.client.model.Car;
 import com.github.mjksabit.warehouse.client.network.MenuNetwork;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
@@ -169,5 +171,15 @@ public class Menu extends Controller {
         hideSearchBar();
         regSearchContainer.setVisible(true);
         regSearchTab.setStyle("-fx-background-color: #00587A");
+    }
+
+    public void showInfo(String info) {
+        Platform.runLater(
+            () -> FXUtil.showSuccess(
+                (Pane) getStage().getScene().getRoot(),
+                info,
+                2000
+            )
+        );
     }
 }

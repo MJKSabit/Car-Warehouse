@@ -8,11 +8,14 @@ public class FXMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
+        // Start from Login Page
         Login loginPage = FXUtil.loadFXML("login");
         loginPage.setStage(primaryStage);
 
         loginPage.show("Log in - MJK Warehouse");
 
+        // Stop all currently running thread
         primaryStage.setOnCloseRequest(event -> System.exit(0));
     }
 

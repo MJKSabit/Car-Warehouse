@@ -1,26 +1,28 @@
 package com.github.mjksabit.warehouse.client.network;
 
-import com.github.mjksabit.warehouse.client.FXUtil;
 import com.github.mjksabit.warehouse.client.controller.Login;
 import javafx.application.Platform;
-import javafx.scene.layout.Pane;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
-public class LoginNetwork {
+final public class LoginNetwork {
 
     private final Login loginController;
 
+    /**
+     * Tightly Coupled with Login Controller,
+     * Only handles network related stuff of Login
+     * @param loginController   Login Controller
+     */
     public LoginNetwork(Login loginController) {
         this.loginController = loginController;
 
         ResponseListener responseListener = ServerConnect.getInstance().getResponseListener();
-        responseListener.setErrorHandler(response -> FXUtil.showError(
-                (Pane) loginController.getStage().getScene().getRoot(),
-                response.getText().optString(Data.INFO, "Information not provided"),
-                2000));
+
+        // What to do if Server sends Data.ERROR Response ?
+        responseListener.setErrorHandler(
+            new ErrorListener(loginController)
+        );
     }
 
     public void loginAsManufacturer(String username, String password) {
@@ -31,22 +33,32 @@ public class LoginNetwork {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         var request = new Data(Data.LOGIN, object, null);
 
-        ServerConnect.getInstance().sendRequest(request, response -> Platform.runLater(loginController::showHome));
+        ServerConnect.getInstance().sendRequest(
+            request,
+            // If Successful log in, navigate to home page
+            response -> Platform.runLater(loginController::showHome)
+        );
     }
 
     public void loginAsAdmin(String password) {
         var object = new JSONObject();
         try {
+            // Default ADMIN USERNAME
             object.put(Data.LOGIN_USERNAME, "admin");
             object.put(Data.LOGIN_PASSWORD, password);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         var request = new Data(Data.ADMIN, object, null);
 
-        ServerConnect.getInstance().sendRequest(request, response -> Platform.runLater(loginController::showAdmin));
+        ServerConnect.getInstance().sendRequest(
+            request,
+            // If Successful log in, navigate to admin page
+            response -> Platform.runLater(loginController::showAdmin)
+        );
     }
-
 }

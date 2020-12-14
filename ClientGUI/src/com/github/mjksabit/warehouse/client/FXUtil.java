@@ -13,7 +13,18 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
+/**
+ * Utility Methods for JavaFX
+ */
 public class FXUtil {
+    /**
+     * Loads an fxml file and provides the instance of the controller
+     *
+     * @param fxmlName  FXML File name excluding ".fxml" part and FXML must be in the view package
+     * @param <T>       T is the Controller which <b>extends @link{Controller}</b>
+     * @return          instance of the loaded controller, auto type casted
+     * @throws IOException  if unable to load the FXML File
+     */
     public static <T extends Controller> T loadFXML(String fxmlName) throws IOException {
         String fxmlPath = "view/" + fxmlName + ".fxml";
         FXMLLoader loader = new FXMLLoader(FXMain.class.getResource(fxmlPath));
@@ -27,6 +38,12 @@ public class FXUtil {
         return controller;
     }
 
+    /**
+     * Load a FXML file without controller
+     *
+     * @param fxmlName  FXML File name excluding ".fxml" part and FXML must be in the view package
+     * @return          FXMLLoader for the fxml file
+     */
     public static FXMLLoader getFXMLLoader(String fxmlName) {
         String fxmlPath = "view/" + fxmlName + ".fxml";
         return new FXMLLoader(FXMain.class.getResource(fxmlPath));
@@ -43,7 +60,7 @@ public class FXUtil {
         Label toast = new Label(text);
         toast.setPrefWidth(rootPane.getWidth());
         toast.setWrapText(true);
-        toast.setStyle("-fx-background-color: #ff0e4d; -fx-text-fill: #f0f8ff; -fx-padding: 20px; -fx-alignment: center; ");
+        toast.setStyle("-fx-background-color: #ff0e4d; -fx-text-fill: #f0f8ff; -fx-padding: 10px; -fx-alignment: center; -fx-font-family: Ubuntu;");
         showNotification(rootPane, toast, durationInMSec);
     }
 
@@ -58,7 +75,7 @@ public class FXUtil {
         Label toast = new Label(text);
         toast.setPrefWidth(rootPane.getWidth());
         toast.setWrapText(true);
-        toast.setStyle("-fx-background-color: #00ba35; -fx-text-fill: #f0f8ff; -fx-padding: 20px; -fx-alignment: center; ");
+        toast.setStyle("-fx-background-color: #00ba35; -fx-text-fill: #f0f8ff; -fx-padding: 10px; -fx-alignment: center; -fx-font-family: Ubuntu;");
         showNotification(rootPane, toast, durationInMSec);
     }
 

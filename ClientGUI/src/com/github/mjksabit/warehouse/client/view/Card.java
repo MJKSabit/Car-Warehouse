@@ -21,10 +21,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.function.Function;
 
-public class Card extends AnchorPane {
+final public class Card extends AnchorPane {
 
+    // Flag to show whether Buy Option || Delete & Edit Option
     private static boolean asViewer = true;
 
+    // Changing Which options to show in each cards
     public static void setAsViewer(boolean asViewer) {
         Card.asViewer = asViewer;
     }
@@ -74,38 +76,51 @@ public class Card extends AnchorPane {
     @FXML
     private JFXButton deleteButton;
 
+    /**
+     * Card to show Car details with appropriate actions
+     * @param car   Initial values for the card
+     */
     public Card(Car car) {
-        FXMLLoader loader = FXUtil.getFXMLLoader("card");
-        loader.setController(this);
-        loader.setRoot(this);
-        try {
-            loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
+        // Loads the template from Card FXML
+        FXMLLoader loader = FXUtil.getFXMLLoader("card");
+
+        // Inject this instance to bind with FXML
+        loader.setController(this);
+        // Specify Root of Card (Not specified in FXML)
+        loader.setRoot(this);
+
+        try { loader.load(); }
+        catch (IOException e) { e.printStackTrace(); }
+
+        // Show Options which are relevant to User
         viewerOptions.setDisable(!asViewer);
         viewerOptions.setVisible(asViewer);
         manuOptions.setDisable(asViewer);
         manuOptions.setVisible(!asViewer);
 
+        // Change default values of the card
         setCar(car);
     }
 
+    // Keeps the car instance for later usage
     private Car car = null;
 
+    // Set the car object to change its values
     public void setCar(Car car) {
         this.car = car;
 
+        // From Right To Left :: Color
         Circle[] circles = {color3, color2, color1};
 
         carMake.setText(car.getMake());
         carModel.setText(car.getModel());
-        price.setText("$"+car.getPrice());
+        price.setText(String.format("$%d", car.getPrice()));
         registrationNo.setText(car.getRegistrationNumber());
-        yearMade.setText(car.getYearMade()+"");
+        yearMade.setText(String.valueOf(car.getYearMade()));
 
         for (int i = 0; i < 3; i++) {
+            // Do not show color circle if NULL
             if (!car.getColors()[i].equals("null")) {
                 circles[i].setFill(Color.valueOf(car.getColors()[i]));
                 circles[i].setVisible(true);
@@ -114,33 +129,42 @@ public class Card extends AnchorPane {
             }
         }
 
-        if(car.getImage() != null)
+        if(car.getImage() != null) // If there is image, set the image, else default will be shown
             image.setImage(new Image(new ByteArrayInputStream(car.getImage())));
 
+        // How many car left?
         setLeft(car.getLeft());
     }
 
+
     public void setLeft(int left) {
+        // Show Out of stock if no car LEFT
+        // And disable option to BUY
         if (left <= 0) {
             quantity.setText("Out of Stock");
             quantity.setStyle("-fx-background-color: #F007");
             viewerOptions.setDisable(true);
         }
         else {
-            quantity.setText(left+" left");
+            quantity.setText(String.format("%d left", left));
             quantity.setStyle("-fx-background-color: #0007");
             viewerOptions.setDisable(!asViewer);
         }
 
     }
 
+    // Inject OnClickListener From Outside (FOR VIEWER)
     public void setOnBuyListener(EventHandler<ActionEvent> buyListener) {
-        buyButton.setOnAction(buyListener);
+        if (asViewer)
+            buyButton.setOnAction(buyListener);
     }
 
+    // Inject OnClickListener From Outside (FOR MANUFACTURER)
     public void setManufacturerListener(EventHandler<ActionEvent> edit, EventHandler<ActionEvent> remove) {
-        editButton.setOnAction(edit);
-        deleteButton.setOnAction(remove);
+        if (!asViewer) {
+            editButton.setOnAction(edit);
+            deleteButton.setOnAction(remove);
+        }
     }
 
     public Car getCar() {

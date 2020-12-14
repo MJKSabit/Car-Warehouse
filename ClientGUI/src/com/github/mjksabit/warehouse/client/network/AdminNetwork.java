@@ -1,32 +1,41 @@
 package com.github.mjksabit.warehouse.client.network;
 
-import com.github.mjksabit.warehouse.client.FXUtil;
 import com.github.mjksabit.warehouse.client.controller.Admin;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.scene.layout.Pane;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AdminNetwork {
+final public class AdminNetwork {
 
     private Admin admin;
 
+    /**
+     * Tightly Coupled with Admin Controller,
+     * Only handles network related stuff of that Controller
+     * @param admin The controller instance
+     */
     public AdminNetwork(Admin admin) {
         this.admin = admin;
-        ServerConnect.getInstance().getResponseListener().setErrorHandler(response -> Platform.runLater(() ->
-                FXUtil.showError((Pane) admin.getStage().getScene().getRoot(),
-                        response.getText().optString(Data.INFO, "Information not provided"),
-                        2000)));
+
+        // What to do if Server sends Data.ERROR Response ?
+        ServerConnect.getInstance().getResponseListener().setErrorHandler(
+            new ErrorListener(admin)
+        );
     }
 
+    // Sends Logout request to Server
     public void logout() {
-        ServerConnect.getInstance().sendRequest(new Data(Data.LOGOUT, new JSONObject(), null), response -> {
-            Platform.runLater(() -> admin.showLogin());
-        });
+        ServerConnect.getInstance().sendRequest(
+                // Send Logout Request
+                new Data(Data.LOGOUT, new JSONObject(), null),
+                // Navigate to Login Page after Logout
+                response -> Platform.runLater(admin::showLogin)
+        );
     }
 
+    // Sends Adding New User Request to Server
     public void addUser(String username, String password) {
         JSONObject object = new JSONObject();
         try {
@@ -35,30 +44,56 @@ public class AdminNetwork {
         } catch (JSONException ignored) {}
 
         Data request = new Data(Data.ADD_USER, object, null);
-        ServerConnect.getInstance().sendRequest(request, response -> Platform.runLater(()->admin.addUser(username)));
+
+        ServerConnect.getInstance().sendRequest(
+            request,
+            response -> Platform.runLater(()->admin.addUser(username))
+        );
     }
 
-    public void getAllUser(ObservableList<String> items) {
+    /**
+     * Request for All Users (Manufacturer) from the server
+     * @param items After retrieving user, where to add?
+     */
+    public void getAllUser(final ObservableList<String> items) {
+
         Data request = new Data(Data.GET_USERS, new JSONObject(), null);
-        ServerConnect.getInstance().sendRequest(request, response -> {
-            Platform.runLater(items::clear);
 
-            JSONArray users = response.getText().optJSONArray(Data.USER);
-            for (int i=0; users!=null && i<users.length(); i++) {
-                var user = users.optString(i);
-                Platform.runLater(() -> items.add(user));
+        ServerConnect.getInstance().sendRequest(
+            request,
+            response -> {
+                // First Action on getting back the response,
+                // Remove all previous items and add all new
+                Platform.runLater(items::clear);
+
+                // Get All Users as JSONArray
+                JSONArray users = response.getText().optJSONArray(Data.USER);
+                for (int i=0; users!=null && i<users.length(); i++) {
+                    var user = users.optString(i);
+
+                    // Add User to the items List
+                    Platform.runLater(() -> items.add(user));
+                }
             }
-        });
+        );
     }
 
-    public void removeUser(String username, ObservableList<String> list) {
+    /**
+     * Request to server to remove a user with username
+     * @param username  user to remove
+     * @param list      After removal, update this list
+     */
+    public void removeUser(String username, final ObservableList<String> list) {
         JSONObject jsonObject = new JSONObject();
 
         try {
             jsonObject.put(Data.USER, username);
         } catch (JSONException ignored) {}
 
-        ServerConnect.getInstance().sendRequest(new Data(Data.REMOVE_USER, jsonObject, null),
-                response -> Platform.runLater(() -> list.remove(username)));
+        ServerConnect.getInstance().sendRequest(
+                new Data(Data.REMOVE_USER, jsonObject, null),
+                // Remove user from the observable list
+                response -> Platform.runLater(() -> list.remove(username))
+        );
     }
 }
