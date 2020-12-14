@@ -8,6 +8,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+// todo -- Add DATA Builder
 public final class Data {
 
     private final String TYPE;
