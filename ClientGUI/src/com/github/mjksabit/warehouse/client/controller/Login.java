@@ -1,13 +1,15 @@
 package com.github.mjksabit.warehouse.client.controller;
 
 import com.github.mjksabit.warehouse.client.FXUtil;
-import com.github.mjksabit.warehouse.client.network.LoginNetwork;
-import com.jfoenix.controls.JFXButton;
+import com.github.mjksabit.warehouse.client.network.*;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -28,11 +30,12 @@ public class Login extends Controller {
     @FXML
     private AnchorPane manuPane;
 
-    private LoginNetwork network;
-
     public void initialize() {
-        // Get New instance to manage Login Related Network Request-Response
-        network = new LoginNetwork(this);
+
+        // What to do if Server sends Data.ERROR Response ?
+        ServerConnect.getInstance().getResponseListener().setErrorHandler(
+                new ErrorListener(this)
+        );
 
         // View Property Binding For Automatic Toggle
         manuPane.visibleProperty().bind(manuPane.disableProperty().not());
@@ -48,7 +51,7 @@ public class Login extends Controller {
 
     @FXML
     void manufacturerLogin(ActionEvent event) {
-        network.loginAsManufacturer(manuUsername.getText(), manuPassword.getText());
+        this.loginAsManufacturer(manuUsername.getText(), manuPassword.getText());
     }
 
     @FXML
@@ -72,7 +75,7 @@ public class Login extends Controller {
 
     @FXML
     void adminLogin(ActionEvent event) {
-        network.loginAsAdmin(adminPassword.getText());
+        this.loginAsAdmin(adminPassword.getText());
     }
 
     public void showHome() {
@@ -97,5 +100,42 @@ public class Login extends Controller {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void loginAsManufacturer(String username, String password) {
+        var object = new JSONObject();
+        try {
+            object.put(Data.LOGIN_USERNAME, username);
+            object.put(Data.LOGIN_PASSWORD, password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        var request = new Data(Data.LOGIN, object, null);
+
+        ServerConnect.getInstance().sendRequest(
+                request,
+                // If Successful log in, navigate to home page
+                response -> Platform.runLater(this::showHome)
+        );
+    }
+
+    public void loginAsAdmin(String password) {
+        var object = new JSONObject();
+        try {
+            // Default ADMIN USERNAME
+            object.put(Data.LOGIN_USERNAME, "admin");
+            object.put(Data.LOGIN_PASSWORD, password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        var request = new Data(Data.ADMIN, object, null);
+
+        ServerConnect.getInstance().sendRequest(
+                request,
+                // If Successful log in, navigate to admin page
+                response -> Platform.runLater(this::showAdmin)
+        );
     }
 }
