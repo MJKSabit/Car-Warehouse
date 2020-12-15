@@ -1,6 +1,7 @@
 package com.github.mjksabit.warehouse.client;
 
 import com.jfoenix.controls.JFXSnackbar;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -30,6 +31,13 @@ public class FXUtil {
         FXMLLoader loader = new FXMLLoader(FXMain.class.getResource(fxmlPath));
 
         Parent rootNode = loader.load();
+
+        // Fade Transition when changing scene
+        FadeTransition ft = new FadeTransition(Duration.millis(1000), rootNode);
+        ft.setFromValue(0.0);
+        ft.setToValue(1.0);
+        ft.play();
+
         Scene scene = new Scene(rootNode);
 
         T controller = loader.getController();

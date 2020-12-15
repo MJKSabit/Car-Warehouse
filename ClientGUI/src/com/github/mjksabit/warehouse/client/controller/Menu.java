@@ -2,10 +2,16 @@ package com.github.mjksabit.warehouse.client.controller;
 
 import com.github.mjksabit.warehouse.client.FXUtil;
 import com.github.mjksabit.warehouse.client.model.Car;
-import com.github.mjksabit.warehouse.client.network.*;
+import com.github.mjksabit.warehouse.client.network.Data;
+import com.github.mjksabit.warehouse.client.network.ErrorListener;
+import com.github.mjksabit.warehouse.client.network.ResponseListener;
+import com.github.mjksabit.warehouse.client.network.ServerConnect;
 import com.github.mjksabit.warehouse.client.view.Card;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
+import javafx.animation.FadeTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,6 +22,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,6 +38,9 @@ public class Menu extends Controller {
 
     @FXML
     private JFXButton regSearchTab;
+
+    @FXML
+    private ProgressIndicator searchOpen;
 
     @FXML
     private JFXButton makeSearchTab;
@@ -73,9 +83,20 @@ public class Menu extends Controller {
     // The Predicate to filter cards in the Observable List
     private volatile Predicate<Card> cardFilter = item -> true;
 
+    // Searchbar Animation
+    private static final Duration SEARCH_ANIMATION_DURATION = Duration.seconds(0.2);
+    private TranslateTransition searchbarCloseAnimation;
+    private TranslateTransition searchbarOpenAnimation;
+
+    // Card Animation
+    private static final Duration CARD_ANIMATION_DURATION = Duration.seconds(0.2);
+
     // Initiate the Menu View
     // MUST CALL THIS BEFORE SHOW
     public void init(String username) {
+
+        // Sets the ObservableList that shows Cards
+        cards = carListFlowPane.getChildren();
 
         // Initially Sets the username
         usernameLabel.setText(username);
@@ -84,11 +105,20 @@ public class Menu extends Controller {
         regSearchContainer.managedProperty().bind(regSearchContainer.visibleProperty());
         makeSearchContainer.managedProperty().bind(makeSearchContainer.visibleProperty());
 
+        // Animation in Search
+        searchOpen.visibleProperty().bind(regSearchContainer.visibleProperty().or(makeSearchContainer.visibleProperty()));
+
+        searchbarCloseAnimation = new TranslateTransition(SEARCH_ANIMATION_DURATION);
+        searchbarCloseAnimation.setFromX(0);
+        searchbarCloseAnimation.toXProperty().bind(carListFlowPane.widthProperty());
+        searchbarCloseAnimation.setOnFinished(actionEvent -> hideSearchBar());
+
+        searchbarOpenAnimation = new TranslateTransition(SEARCH_ANIMATION_DURATION);
+        searchbarOpenAnimation.fromXProperty().bind(carListFlowPane.widthProperty());
+        searchbarOpenAnimation.setToX(0);
+
         // No Searchbar at start
         hideSearchBar();
-
-        // Sets the ObservableList that shows Cards
-        cards = carListFlowPane.getChildren();
 
         ResponseListener responseListener = ServerConnect.getInstance().getResponseListener();
 
@@ -124,7 +154,17 @@ public class Menu extends Controller {
 
             // Try to remove only if currently on the observable list
             if (cardFilter.test(card))
-                Platform.runLater(() -> cards.remove(card));
+                Platform.runLater(() -> {
+                    // Card Delete Animation
+                    ScaleTransition deleteCardAnimation = new ScaleTransition(CARD_ANIMATION_DURATION);
+                    deleteCardAnimation.setFromX(1);
+                    deleteCardAnimation.setFromY(1);
+                    deleteCardAnimation.setToX(0);
+                    deleteCardAnimation.setToY(0);
+                    deleteCardAnimation.setNode(card);
+                    deleteCardAnimation.setOnFinished(e -> cards.remove(card));
+                    deleteCardAnimation.play();
+                });
         }
     }
 
@@ -148,7 +188,17 @@ public class Menu extends Controller {
         // If any filter active (eg. Search),
         // show the card only if it is true for the predicate
         if(cardFilter.test(card))
-            Platform.runLater(() -> cards.add(card));
+            Platform.runLater(() -> {
+                // Card Add Animation
+                ScaleTransition newCardAnimation = new ScaleTransition(CARD_ANIMATION_DURATION);
+                newCardAnimation.setFromX(0);
+                newCardAnimation.setFromY(0);
+                newCardAnimation.setToX(1);
+                newCardAnimation.setToY(1);
+                newCardAnimation.setNode(card);
+                cards.add(card);
+                newCardAnimation.play();
+            });
 
         // Add Car Buy Option for Viewer
         card.setOnBuyListener((ignored -> buyCar(id)));
@@ -221,10 +271,19 @@ public class Menu extends Controller {
                 // -- To preserve order and prevent multiple Card
                 if (!cards.contains(card))
                     cards.add(card);
+
+                // Edit Car Animation
+                FadeTransition editCardAnimation = new FadeTransition(CARD_ANIMATION_DURATION);
+                editCardAnimation.setFromValue(0.5);
+                editCardAnimation.setToValue(1.0);
+                editCardAnimation.setNode(card);
+                editCardAnimation.play();
+
             } else {
                 // Don't Add the car if it does not pass search criteria
                 // remove older version already exists there
                 cards.remove(card);
+
             }
         });
     }
@@ -289,13 +348,15 @@ public class Menu extends Controller {
 
     @FXML
     void closeSearchByMakeModel(ActionEvent event) {
-        hideSearchBar();
+        searchbarCloseAnimation.setNode(makeSearchContainer);
+        searchbarCloseAnimation.play();
         resetCardFilter();
     }
 
     @FXML
     void closeSearchByReg(ActionEvent event) {
-        hideSearchBar();
+        searchbarCloseAnimation.setNode(regSearchContainer);
+        searchbarCloseAnimation.play();
         resetCardFilter();
     }
 
@@ -320,13 +381,24 @@ public class Menu extends Controller {
         regSearchContainer.setVisible(false);
         makeSearchTab.setStyle("-fx-background-color:  #008891;");
         regSearchTab.setStyle("-fx-background-color:  #008891;");
+        makeSearchContainer.setTranslateX(0);
     }
 
     @FXML
     void showSearchByMake(ActionEvent event) {
+        // If already showing, do nothing
+        if (makeSearchContainer.isVisible()) return;
+
+        // If already showing other, close it
         hideSearchBar();
+
+        // Show search pane
         makeSearchContainer.setVisible(true);
         makeSearchTab.setStyle("-fx-background-color: #00587A");
+
+        // Set animation and play
+        searchbarOpenAnimation.setNode(makeSearchContainer);
+        searchbarOpenAnimation.play();
     }
 
     @FXML
@@ -356,9 +428,19 @@ public class Menu extends Controller {
 
     @FXML
     void showSearchByReg(ActionEvent event) {
+        // If already showing, do nothing
+        if (regSearchContainer.isVisible()) return;
+
+        // If already showing other, close it
         hideSearchBar();
+
+        // Show search pane
         regSearchContainer.setVisible(true);
         regSearchTab.setStyle("-fx-background-color: #00587A");
+
+        // Set animation and play
+        searchbarOpenAnimation.setNode(regSearchContainer);
+        searchbarOpenAnimation.play();
     }
 
     // Set filters to show search results

@@ -83,7 +83,7 @@ public class Edit extends Controller{
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Image");
         selectedFile = fileChooser.showOpenDialog(getStage());
-        try {
+        if (selectedFile != null) try {
             image.setImage(new Image(new FileInputStream(selectedFile)));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
