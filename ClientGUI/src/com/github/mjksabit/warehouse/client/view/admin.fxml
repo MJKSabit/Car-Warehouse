@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="445.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.mjksabit.warehouse.client.controller.Admin">
+   <children>
+      <AnchorPane layoutX="29.0" layoutY="14.0" prefHeight="256.0" prefWidth="300.0">
+         <children>
+            <ListView fx:id="userListView" layoutY="44.0" prefHeight="234.0" prefWidth="300.0" AnchorPane.bottomAnchor="-4.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="44.0" />
+            <Label layoutX="1.0" layoutY="16.0" text="Manufacturers:" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="15.0">
+               <font>
+                  <Font name="Consolas Bold" size="13.0" />
+               </font>
+            </Label>
+            <JFXButton fx:id="deleteButton" buttonType="RAISED" layoutX="187.0" layoutY="3.0" onAction="#deleteSelected" prefHeight="34.0" prefWidth="174.0" style="-fx-background-color: #F00;" text="Delete Selected" textFill="WHITE" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="3.0">
+               <font>
+                  <Font name="Consolas" size="14.0" />
+               </font>
+               <graphic>
+                  <Pane prefHeight="24.0" prefWidth="24.0">
+                     <children>
+                        <SVGPath content="m256 0c-141.164062 0-256 114.835938-256 256s114.835938 256 256 256 256-114.835938 256-256-114.835938-256-256-256zm94.273438 320.105469c8.339843 8.34375 8.339843 21.824219 0 30.167969-4.160157 4.160156-9.621094 6.25-15.085938 6.25-5.460938 0-10.921875-2.089844-15.082031-6.25l-64.105469-64.109376-64.105469 64.109376c-4.160156 4.160156-9.621093 6.25-15.082031 6.25-5.464844 0-10.925781-2.089844-15.085938-6.25-8.339843-8.34375-8.339843-21.824219 0-30.167969l64.109376-64.105469-64.109376-64.105469c-8.339843-8.34375-8.339843-21.824219 0-30.167969 8.34375-8.339843 21.824219-8.339843 30.167969 0l64.105469 64.109376 64.105469-64.109376c8.34375-8.339843 21.824219-8.339843 30.167969 0 8.339843 8.34375 8.339843 21.824219 0 30.167969l-64.109376 64.105469zm0 0" fill="WHITE" layoutX="-244.0" layoutY="-244.0" scaleX="0.03" scaleY="0.03" />
+                     </children>
+                  </Pane>
+               </graphic>
+            </JFXButton>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="363.0" layoutY="30.0" prefHeight="234.0" prefWidth="195.0">
+         <children>
+            <JFXTextField fx:id="newUsername" labelFloat="true" layoutY="39.0" prefHeight="28.0" prefWidth="195.0" promptText="Username" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <font>
+                  <Font name="Consolas" size="14.0" />
+               </font>
+            </JFXTextField>
+            <JFXPasswordField fx:id="newPassword" labelFloat="true" layoutY="105.0" prefWidth="195.0" promptText="Password" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <font>
+                  <Font name="Consolas" size="14.0" />
+               </font>
+            </JFXPasswordField>
+            <JFXPasswordField fx:id="newConfirmPassword" labelFloat="true" layoutY="156.0" prefWidth="195.0" promptText="Confirm Password" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <font>
+                  <Font name="Consolas" size="14.0" />
+               </font>
+            </JFXPasswordField>
+            <JFXButton fx:id="addNewButton" buttonType="RAISED" graphicTextGap="10.0" layoutX="121.0" layoutY="200.0" onAction="#addNewUser" style="-fx-background-color: #0d810d;" text="Add New" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <font>
+                  <Font name="Consolas" size="14.0" />
+               </font>
+               <graphic>
+                  <SVGPath content="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM17 13H13V17H11V13H7V11H11V7H13V11H17V1M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM17 13H13V17H11V13H7V11H11V7H13V11H17V13Z" fill="WHITE" />
+               </graphic>
+            </JFXButton>
+            <Label text="Add New Manufacurer" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <font>
+                  <Font name="Consolas Bold" size="13.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <Label layoutX="434.0" layoutY="326.0" text="admin">
+         <font>
+            <Font name="Consolas Bold" size="45.0" />
+         </font>
+      </Label>
+      <JFXButton layoutX="442.0" layoutY="380.0" onAction="#logout" prefHeight="31.0" prefWidth="116.0" style="-fx-background-color: #F00;" text="Log out" textFill="WHITE">
+         <font>
+            <Font name="Consolas" size="14.0" />
+         </font>
+         <graphic>
+            <SVGPath content="M21.0208 32.4792L23.9583 35.4167L34.375 25L23.9583 14.5833L21.0208 17.5208L26.3958 22.9167H6.25V27.0833H26.3958L21.0208 32.4792ZM39.5833 6.25H10.4167C8.10417 6.25 6.25 8.125 6.25 10.4167V18.75H10.4167V10.4167H39.5833V39.5833H10.4167V31.25H6.25V39.5833C6.25 41.875 8.10417 43.75 10.4167 43.75H39.5833C41.875 43.75 43.75 41.875 43.75 39.5833V10.4167C43.75 8.125 41.875 6.25 39.5833 6.25Z" fill="WHITE" scaleX="0.5" scaleY="0.5" />
+         </graphic>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+         </padding>
+      </JFXButton>
+      <JFXButton layoutX="226.0" layoutY="277.0" onAction="#refresh" style="-fx-border-color: black; -fx-border-radius: 5px;" text="Refresh">
+         <font>
+            <Font name="Consolas" size="14.0" />
+         </font>
+         <graphic>
+            <Pane prefHeight="24.0" prefWidth="24.0">
+               <children>
+                  <SVGPath content="M408.973,142.689C368.113,101.829,313.785,79.326,256,79.326h-31.717l50.907-51.032L246.826,0L147.68,99.389 l97.852,99.488l28.563-28.093l-50.551-51.396H256c97.198,0,176.275,79.076,176.275,176.275S353.198,471.938,256,471.938 S79.725,392.861,79.725,295.659v-20.031l-40.062,0.004v20.031c0,57.786,22.503,112.113,63.364,152.973 C143.887,489.497,198.215,512,256,512c57.785,0,112.113-22.503,152.973-63.364c40.861-40.861,63.364-95.188,63.364-152.973 S449.834,183.55,408.973,142.689z" layoutX="-244.0" layoutY="-244.0" scaleX="0.03" scaleY="0.03" />
+               </children>
+            </Pane>
+         </graphic>
+      </JFXButton>
+   </children>
+</AnchorPane>
