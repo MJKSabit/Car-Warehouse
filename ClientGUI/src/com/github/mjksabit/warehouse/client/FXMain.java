@@ -2,6 +2,7 @@ package com.github.mjksabit.warehouse.client;
 
 import com.github.mjksabit.warehouse.client.controller.Login;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class FXMain extends Application {
@@ -14,7 +15,10 @@ public class FXMain extends Application {
      */
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
+
+        // Icon for Application
+        primaryStage.getIcons().add(new Image(FXMain.class.getResourceAsStream("assets/icon.png")));
 
         // Start from Login Page
         Login loginPage = FXUtil.loadFXML("login");

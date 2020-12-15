@@ -38,6 +38,8 @@ public class Admin extends Controller{
     private JFXButton addNewButton;
 
     public void initialize() {
+
+        // Realtime Validation and Protection
         deleteButton.disableProperty().bind(userListView.getSelectionModel().selectedItemProperty().isNull());
         addNewButton.disableProperty().bind(
                 newPassword.textProperty().isNotEqualTo(newConfirmPassword.textProperty())
@@ -150,12 +152,8 @@ public class Admin extends Controller{
     public void removeUser(String username, final ObservableList<String> list) {
         JSONObject jsonObject = new JSONObject();
 
-        try {
-            jsonObject.put(Data.USER, username);
-        } catch (JSONException ignored) {}
-
         ServerConnect.getInstance().sendRequest(
-                new Data(Data.REMOVE_USER, jsonObject, null),
+                new Data.SimpleBuilder(Data.REMOVE_USER).add(Data.USER, username).build(),
                 // Remove user from the observable list
                 response -> Platform.runLater(() -> list.remove(username))
         );

@@ -148,8 +148,7 @@ public final class DB {
     // However, protection is also given in Database level
     // with Conditional Checking of CAR_AVAILABLE>0
     public synchronized Data buyCar(int id) throws JSONException {
-        String type;
-        JSONObject jsonObject = new JSONObject();
+        Data.SimpleBuilder builder = null;
 
         String update =
                 "UPDATE " +
@@ -168,15 +167,14 @@ public final class DB {
             int execute = statement.executeUpdate();
 
             if (execute != 1) throw new SQLException();
-            type = Data.BUY_CAR;
+            builder = new Data.SimpleBuilder(Data.BUY_CAR);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            type = Data.ERROR;
-            jsonObject.put(Data.INFO, "Car not available");
+            builder = new Data.SimpleBuilder(Data.ERROR).add(Data.INFO, "Car not available to buy");
         }
 
-        return new Data(type, jsonObject, null);
+        return builder.build();
     }
 
     public ArrayList<Data> allCars() throws JSONException {

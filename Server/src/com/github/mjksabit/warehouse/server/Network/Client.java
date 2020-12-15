@@ -171,12 +171,8 @@ public final class Client implements Runnable, Closeable {
         // not null means, either EDIT or ADD or UPDATE
         if (car != null)
             return car.toData(id);
-            // null means DELETE
-        else {
-            JSONObject object = new JSONObject();
-            object.put(Data.CAR_ID, id);
-            return new Data(Data.UPDATE_CAR, object, null);
-        }
+        else // null means DELETE
+            return new Data.SimpleBuilder(Data.UPDATE_CAR).add(Data.CAR_ID, id).build();
     }
 
     /**
@@ -196,10 +192,8 @@ public final class Client implements Runnable, Closeable {
     }
 
     // ERROR 403: Unauthorized Access to any Route Response
-    private Data unauthorized() throws JSONException {
-        JSONObject object = new JSONObject();
-        object.put(Data.INFO, "You are not authorized!");
-        return new Data(Data.ERROR, object, null);
+    private Data unauthorized() {
+        return new Data.SimpleBuilder(Data.ERROR).add(Data.INFO, "You are not authorized!").build();
     }
 
     // Login for Manufacturer Only
@@ -236,12 +230,12 @@ public final class Client implements Runnable, Closeable {
 
         // Maybe year was not an integer...
         if (id==-1)
-            return new Data(Data.ERROR, new JSONObject().put(Data.INFO, "Data Validation Failed!"), null);
+            return new Data.SimpleBuilder(Data.ERROR).add(Data.INFO, "Data Validation Failed!").build();
 
         // Notify everyone about the added Car
         notifyAllCar(id);
 
-        return new Data(Data.ADD_CAR, new JSONObject(), null);
+        return new Data.SimpleBuilder(Data.ADD_CAR).build();
     }
 
     private Data removeCar(Data request) throws JSONException {
@@ -251,19 +245,15 @@ public final class Client implements Runnable, Closeable {
 
         // Remove car, and check if deleted
         boolean isRemoved = DB.get().removeCar(request.getText().optInt(Data.CAR_ID));
-        String type;
-        JSONObject object = new JSONObject();
 
-        if (isRemoved)
-            type = Data.REMOVE_CAR;
-        else {
-            type = Data.ERROR;
-            object.put(Data.INFO, "Car can not be deleted.");
+        if (isRemoved) {
+            // Notify Everyone about removed car
+            notifyAllCar(request.getText().optInt(Data.CAR_ID));
+
+            return new Data.SimpleBuilder(Data.REMOVE_CAR).build();
         }
-
-        // Notify Everyone about removed car
-        notifyAllCar(request.getText().optInt(Data.CAR_ID));
-        return new Data(type, object, null);
+        else
+            return new Data.SimpleBuilder(Data.ERROR).add(Data.INFO, "Car can not be deleted.").build();
     }
 
     private Data editCar(Data request) throws JSONException {
@@ -284,14 +274,11 @@ public final class Client implements Runnable, Closeable {
     }
 
     private Data buyCar(Data request) throws JSONException {
-        Data data = DB.get().buyCar(request.getText().optInt(Data.CAR_ID));
-
         // Manufacturer can not buy
-        if (isManufacturer) {
-            JSONObject object = new JSONObject();
-            object.putOpt(Data.INFO, "Only Viewer can buy!");
-            return new Data(Data.ERROR, object, null);
-        }
+        if (isManufacturer)
+            return new Data.SimpleBuilder(Data.ERROR).add(Data.INFO, "Only Viewer can buy!").build();
+
+        Data data = DB.get().buyCar(request.getText().optInt(Data.CAR_ID));
 
         // Notify every client about this buy
         if (!data.getTYPE().equals(Data.ERROR))
@@ -317,7 +304,7 @@ public final class Client implements Runnable, Closeable {
         }).start();
 
         // Sends a dummy Response
-        return new Data(Data.VIEW_ALL, new JSONObject(), null);
+        return new Data.SimpleBuilder(Data.VIEW_ALL).build();
     }
 
     // Admin Login
@@ -332,20 +319,16 @@ public final class Client implements Runnable, Closeable {
             Thread.currentThread().setName("ADMIN");
             sender.renameThread("ADMIN-Response");
 
-            return new Data(Data.ADMIN, new JSONObject(), null);
+            return new Data.SimpleBuilder(Data.ADMIN).build();
         }
 
         logger.info("ADMIN login error");
 
-        JSONObject object = new JSONObject();
-        object.put(Data.INFO, "Password mismatch!");
-        return new Data(Data.ERROR, object, null);
+        return new Data.SimpleBuilder(Data.ERROR).add(Data.INFO, "Password mismatch!").build();
     }
 
     // Add user from request
     private Data addUser(Data request) throws JSONException {
-        JSONObject object = new JSONObject();
-
         // Retrieve Username
         String username = request.getText().getString(Data.LOGIN_USERNAME);
 
@@ -356,13 +339,11 @@ public final class Client implements Runnable, Closeable {
         // Successful only if new user is added to database
         if(DB.get().addUser(username,
                 request.getText().getString(Data.LOGIN_PASSWORD)))
-            return new Data(Data.ADD_USER, object, null);
+            return new Data.SimpleBuilder(Data.ADD_USER).build();
 
             // Maybe there already exists a user with that username
-        else{
-            object.put(Data.INFO, "Can not add user, maybe user already exists!");
-            return new Data(Data.ERROR, object, null);
-        }
+        else
+            return new Data.SimpleBuilder(Data.ERROR).add(Data.INFO, "Can not add user, maybe user already exists!").build();
     }
 
     // Get all user (name only) request,

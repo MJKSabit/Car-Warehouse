@@ -133,6 +133,13 @@ public final class Data {
             return this;
         }
 
+        public SimpleBuilder add(String key, int content) {
+            try { object.put(key, content); }
+            catch (JSONException e) { e.printStackTrace(); }
+            return this;
+        }
+
+
         public Data build() {
             return new Data(TYPE, object, null);
         }
