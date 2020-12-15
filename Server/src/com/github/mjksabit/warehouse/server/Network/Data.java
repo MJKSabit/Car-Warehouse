@@ -118,4 +118,23 @@ public final class Data {
 
         out.flush();
     }
+
+    public static class SimpleBuilder {
+        private final String TYPE;
+        private final JSONObject object = new JSONObject();
+
+        public SimpleBuilder(String TYPE) {
+            this.TYPE = TYPE;
+        }
+
+        public SimpleBuilder add(String key, String content) {
+            try { object.put(key, content); }
+            catch (JSONException e) { e.printStackTrace(); }
+            return this;
+        }
+
+        public Data build() {
+            return new Data(TYPE, object, null);
+        }
+    }
 }

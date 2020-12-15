@@ -6,6 +6,13 @@ import javafx.stage.Stage;
 
 public class FXMain extends Application {
 
+    /*
+    DEPENDENCIES:
+    - Java JSON         : For Server Client Communication
+    - JavaFX 11         : For GUI
+    - JFoenix 9.0.8     : For Material Widgets
+     */
+
     @Override
     public void start(Stage primaryStage) throws Exception{
 

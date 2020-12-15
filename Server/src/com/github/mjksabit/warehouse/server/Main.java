@@ -16,13 +16,20 @@ public final class Main {
 
     private static Scanner scanner = new Scanner(System.in);
 
+    /*
+    DEPENDENCIES:
+    - Java JSON         : For Server Client Communication
+    - Apache Commons    : For SHA512 Hashing - Encryption
+    - SQLite JDBC 3.30  : For SQLite Database Support
+     */
+
     public static void main(String[] args) {
         Logger logger = LogManager.getLogger(Main.class);
 
         // New Thread to close the server explicitly
         new Thread(() -> {
             System.out.println("Press [enter] to close this server...");
-            scanner.next();
+            scanner.nextLine();
             System.out.println("Exiting Server...");
             System.exit(0);
         }).start();

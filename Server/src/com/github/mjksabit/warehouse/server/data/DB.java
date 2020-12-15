@@ -2,6 +2,7 @@ package com.github.mjksabit.warehouse.server.data;
 
 import com.github.mjksabit.warehouse.server.Model.Car;
 import com.github.mjksabit.warehouse.server.Network.Data;
+import org.apache.commons.codec.digest.Crypt;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.util.UuidUtil;
@@ -22,6 +23,9 @@ public final class DB {
     private static final String SQLITE_PREFIX = "jdbc:sqlite:";
     // Database Location, Can either be absolute or relative
     private static final String DATABASE_FILE = "database.db";
+
+    // Password Hashing SALT
+    private static final String SALT = "$6$SALT-FOR-HASHING-PASSWORD";
     
     // Save image in that directory
     private static final String IMAGE_PATH = "images";
@@ -102,9 +106,11 @@ public final class DB {
     }
 
     // Login Validation using PLAIN PASSWORD
-    // Todo -- HASHED PASSWORD
     public Data login(String username, String password) throws JSONException {
         username = username.toLowerCase();
+
+        // Hashed Password with SALT
+        password = Crypt.crypt(password, SALT);
 
         String type = Data.ERROR;
         JSONObject jsonObject = new JSONObject();
@@ -432,6 +438,10 @@ public final class DB {
     }
 
     public boolean addUser(String username, String password) {
+        username = username.toLowerCase();
+        // Password Hashing with SALT
+        password = Crypt.crypt(password, SALT);
+
         String query =
                 "INSERT INTO " +
                         USER_TABLE +
@@ -440,7 +450,7 @@ public final class DB {
                         "(?, ?)";
 
         try (PreparedStatement statement = dbConnect.prepareStatement(query)){
-            statement.setString(1, username.toLowerCase());
+            statement.setString(1, username);
             statement.setString(2, password);
             statement.execute();
             return true;

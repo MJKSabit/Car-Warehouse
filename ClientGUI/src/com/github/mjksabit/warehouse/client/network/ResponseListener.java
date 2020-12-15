@@ -74,7 +74,7 @@ final public class ResponseListener implements Runnable {
                 // Handle Response
                 handleResponse(response);
             } catch (SocketTimeoutException ignored) {
-                System.out.println("No Response for "+ServerConnect.TIMEOUT+" milliseconds. Waiting...");
+//                System.out.println("No Response for "+ServerConnect.TIMEOUT+" milliseconds. Waiting...");
             } catch (Exception e) {
                 continueListening = false;
                 e.printStackTrace();
