@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.mjksabit.warehouse.client.controller.Menu">
+<BorderPane prefHeight="793.0" prefWidth="744.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.mjksabit.warehouse.client.controller.Menu">
    <top>
       <AnchorPane prefHeight="60.0" prefWidth="800.0" style="-fx-background-color: #008891;">
          <children>
