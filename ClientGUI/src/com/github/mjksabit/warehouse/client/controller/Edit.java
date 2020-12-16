@@ -14,10 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 public class Edit extends Controller{
 
@@ -64,6 +61,7 @@ public class Edit extends Controller{
     private JFXCheckBox color_3_check;
 
     private File selectedFile;
+    private byte[] carImage;
 
 
     public void initialize() {
@@ -84,13 +82,16 @@ public class Edit extends Controller{
         fileChooser.setTitle("Select Image");
         selectedFile = fileChooser.showOpenDialog(getStage());
         if (selectedFile != null) try {
-            image.setImage(new Image(new FileInputStream(selectedFile)));
-        } catch (FileNotFoundException e) {
+            var fis = new FileInputStream(selectedFile);
+            carImage = fis.readAllBytes();
+            image.setImage(new Image(new ByteArrayInputStream(carImage)));
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void setCar(Car car) {
+
         regNo.setText(car.getRegistrationNumber());
         carMake.setText(car.getMake());
         yearMade.setText(""+car.getYearMade());
@@ -109,6 +110,7 @@ public class Edit extends Controller{
             }
         }
 
+        carImage = car.getImage();
         image.setImage(new Image(new ByteArrayInputStream(car.getImage())));
         stock.setText(""+car.getLeft());
     }
@@ -123,10 +125,15 @@ public class Edit extends Controller{
                 color2.isVisible() ? color2.valueProperty().get().toString() : null,
                 color3.isVisible() ? color3.valueProperty().get().toString() : null);
 
-        if (selectedFile == null)
-            selectedFile = new File(FXMain.class.getResource("assets/car.jpeg").getFile());
+        // Default Image
+        if (carImage==null)
+            car.setImage(FXMain.class.getResource("assets/car.jpeg").getFile());
+        // If new image is selected
+        else
+            car.setImage(carImage);
+        // old image not changed
+//        else car.setImage(this.car.getImage());
 
-        car.setImage(selectedFile.getPath());
         car.setLeft(Integer.parseInt(stock.getText()));
         return car;
     }
