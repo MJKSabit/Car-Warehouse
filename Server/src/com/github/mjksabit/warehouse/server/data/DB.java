@@ -48,7 +48,7 @@ public final class DB {
     /*
     CREATE TABLE "cars" (
 	    "carid"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	    "registrationNumber"	TEXT NOT NULL,
+	    "registrationNumber"	TEXT NOT NULL UNIQUE,
 	    "make"	TEXT NOT NULL,
     	"model"	TEXT NOT NULL,
     	"year"	INTEGER NOT NULL,
@@ -338,6 +338,8 @@ public final class DB {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             // Validation Failed
+            // Delete Uploaded File
+            new File(IMAGE_PATH + File.separator + uuid).delete();
             return -1;
         }
     }

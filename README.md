@@ -2,67 +2,86 @@
 
 ---
 
-## Problem Analysis
+Fully Documented Code
 
-- Server will have a database connection
-- TCP Networing
-- Authentication of **Manufacturer**
-- Unauthenticated access of **Viewer**
+## YouTube Demo
 
-## Users
+[![](https://i.postimg.cc/j53TR2d6/image.png)](https://youtu.be/Sz6KmsDE8Y0)
 
-### Admin
+## Class Diagram
 
-Add, remove **Manufacturer**
+### Server & Client
 
-### Manufacturer
+![](https://i.postimg.cc/bJGRCYrV/Offline-6-1.jpg)
 
-Add, Edit, Delete and View all cars
+## Network DataFlow
+
+Data is sent and received over socket via the *Class* `Data` . Client sends **request** and add a **Callback** function that will handle the **response**. 
+
+## Offline Requirements:
+
+### Manufacturers
+
+Authentication
+
+![](https://i.postimg.cc/DyBMDH0s/image.png)
+
+View All Cars
+
+![](https://i.postimg.cc/T3HmZqnC/image.png)
+
+Add A Car
+
+![](https://i.postimg.cc/SsLnNWz0/image.png)
+
+Edit A Car
+
+![](https://i.postimg.cc/7Yjwd5fS/image.png)
+
+**Delete A Car**
 
 ### Viewer
 
-Search by Reg#, Search by Make/Model, Buy
+View All Cars
 
+![](https://i.postimg.cc/br8q6WJW/image.png)
 
+Search By Registration Number
 
-## Data
+![](https://i.postimg.cc/kXYd8Bxk/image.png)
 
-### Car
+Search By Make and Model
 
-Registration No, Make, Model, Year, Price, Color[3], **Quantity** (can be greater than 1), ***Image***
+![](https://i.postimg.cc/5yF83HXn/image.png)
 
-### Login Details
+Buy a Car
 
-Hashed Password, Username
+![](https://i.postimg.cc/25zFD8tS/image.png)
 
+### Admin (BONUS)
 
+![](https://i.postimg.cc/8cymK84z/image.png)
 
-## Current UI
+### SQLite Database (Bonus)
 
-![Card View](https://i.ibb.co/qN6sdHz/image.png)
+Car Table
 
+![](https://i.postimg.cc/ryGz2CSM/image.png)
 
+User Table (**Salted SHA-512 Hashed Password**)
 
-Simple Sever-Client Program using:
+![](https://i.postimg.cc/MTd41FCz/image.png)
 
-### Server
+### Image (Bonus)
 
-- SQLite using JDBC
-- SHA265 Hashing
-- Log4J2
-- UUID for saving image
-- JUnit
-- Maven
+![](https://i.postimg.cc/25zFD8tS/image.png)
 
-### Client
+## Extra Features
 
-- JavaFX Frontend
-- Material Theme using JFoenix
+- Animations - Watch the YouTube Video
 
-## Communication Protocol
+- Real Time Updates - Watch the YouTube Video
 
-`Server` will have multiple `Client`. Each of these `Client` will have a `Router` and `State` of its own to manage State.
+- Server Logging
 
-`Router` will have `Interceptor` and `Listener` which will catch a request to a followed protocol. 
-
-`Error` will have message with it and will be precise.
+  ![](https://i.postimg.cc/YjKDfBCL/image.png)
